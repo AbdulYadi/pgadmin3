@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  
+<!-- Product details -->
+
+    <Product
+        Manufacturer="$(var.APPVENDOR)"
+        Id="{8810DE7E-AE2D-4F73-8E2C-B28AAD834712}"
+        UpgradeCode="{CB8662F8-D059-4B7D-A1D6-50CCDC09092D}"
+        Name="$(var.APPNAME) $(var.APPVERSION)" 
+        Version="$(var.APPVERSION)" 
+        Language="1033">
+
+<!-- Package details -->
+
+        <Package
+            Keywords="$(var.APPKEYWORDS)"
+            Comments="$(var.APPCOMMENTS)"
+            Manufacturer="$(var.APPVENDOR)"
+            InstallerVersion="405"
+            Languages="1033" 
+            Compressed="yes" 
+            SummaryCodepage="1252" />
+        
+<!-- Directories -->
+
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder" Name="PFiles">
+                <Directory Id="BASEDIR" Name="$(var.APPNAME)">
+                    <Directory Id="VersionDir" Name="$(var.APPVERSION)">
+
+                        <Component Id="core_libs" Guid="{3CF23B03-AE55-4FAB-B03B-7F8454F8802F}">
+                            <File Id="core_libs.libiconv_2.dll" Name="libiconv-2.dll" DiskId="1" Source="$(var.PGDIR)/bin/libiconv-2.dll" />
+                            <File Id="core_libs.libeay32.dll" Name="libeay32.dll" DiskId="1" Source="$(var.PGDIR)/bin/libeay32.dll" />
+                            <File Id="core_libs.libpq.dll" Name="libpq.dll" DiskId="1" Source="$(var.PGDIR)/bin/libpq.dll" />
+                            <File Id="core_libs.libintl_8.dll" Name="libintl-8.dll" DiskId="1" Source="$(var.PGDIR)/bin/libintl-8.dll" />
+                            <File Id="core_libs.libxml2.dll" Name="libxml2.dll" DiskId="1" Source="$(var.PGDIR)/bin/libxml2.dll" />
+                            <File Id="core_libs.libxslt.dll" Name="libxslt.dll" DiskId="1" Source="$(var.PGDIR)/bin/libxslt.dll" />
+                            <File Id="core_libs.ssleay32.dll" Name="ssleay32.dll" DiskId="1" Source="$(var.PGDIR)/bin/ssleay32.dll" />
+                            <File Id="core_libs.wxbase28u_net_vc_custom.dll" Name="wxbase28u_net_vc_custom.dll" DiskId="1" Source="$(var.WXDIR)/lib/vc_dll/wxbase28u_net_vc_custom.dll" DefaultLanguage="0" />
+                            <File Id="core_libs.wxbase28u_vc_custom.dll" Name="wxbase28u_vc_custom.dll" DiskId="1" Source="$(var.WXDIR)/lib/vc_dll/wxbase28u_vc_custom.dll" DefaultLanguage="0" />
+                            <File Id="core_libs.wxbase28u_xml_vc_custom.dll" Name="wxbase28u_xml_vc_custom.dll" DiskId="1" Source="$(var.WXDIR)/lib/vc_dll/wxbase28u_xml_vc_custom.dll" DefaultLanguage="0" />
+                            <File Id="core_libs.wxmsw28u_adv_vc_custom.dll" Name="wxmsw28u_adv_vc_custom.dll" DiskId="1" Source="$(var.WXDIR)/lib/vc_dll/wxmsw28u_adv_vc_custom.dll" DefaultLanguage="0" />
+                            <File Id="core_libs.wxmsw28u_aui_vc_custom.dll" Name="wxmsw28u_aui_vc_custom.dll" DiskId="1" Source="$(var.WXDIR)/lib/vc_dll/wxmsw28u_aui_vc_custom.dll" DefaultLanguage="0" />
+                            <File Id="core_libs.wxmsw28u_core_vc_custom.dll" Name="wxmsw28u_core_vc_custom.dll" DiskId="1" Source="$(var.WXDIR)/lib/vc_dll/wxmsw28u_core_vc_custom.dll" DefaultLanguage="0" />
+                            <File Id="core_libs.wxmsw28u_html_vc_custom.dll" Name="wxmsw28u_html_vc_custom.dll" DiskId="1" Source="$(var.WXDIR)/lib/vc_dll/wxmsw28u_html_vc_custom.dll" DefaultLanguage="0" />
+                            <File Id="core_libs.wxmsw28u_stc_vc_custom.dll" Name="wxmsw28u_stc_vc_custom.dll" DiskId="1" Source="$(var.WXDIR)/lib/vc_dll/wxmsw28u_stc_vc_custom.dll" DefaultLanguage="0" />
+                            <File Id="core_libs.wxmsw28u_xrc_vc_custom.dll" Name="wxmsw28u_xrc_vc_custom.dll" DiskId="1" Source="$(var.WXDIR)/lib/vc_dll/wxmsw28u_xrc_vc_custom.dll" DefaultLanguage="0" />
+                            <File Id="core_libs.zlib1.dll" Name="zlib1.dll" DiskId="1" Source="$(var.PGDIR)/bin/zlib1.dll" />
+                        </Component>
+
+                        <Merge Id="CRT" Language="0" SourceFile="$(env.ProgramFiles)\Common Files\Merge Modules\Microsoft_VC120_CRT_x86.msm" DiskId="1" />
+
+                        <Component Id="pgadmin_exes" Guid="{5EA77DAF-4AD7-4F9F-AC4B-C21B5299E8F8}">
+                            <File Id="pgadmin_exes.pgadmin3.exe" Name="pgadmin3.exe" DiskId="1" Source="$(var.BUILDTREE)/pgadmin/Release/pgAdmin3.exe" KeyPath="yes" />
+                            <Shortcut Id="pgadmin_exes.pgadmin3.exe" Directory="SMDir" Name="$(var.APPNAME)" Description="$(var.APPNAME) - $(var.APPCOMMENTS)" Show="normal" Advertise="yes" Icon="pgadmin3.ico" >
+<?if $(var.BRANDED) = 1 ?>
+                                <Icon Id="pgadmin3.ico" SourceFile="$(var.BRANDINGDIR)/icon.ico" />
+<?else?>
+                                <Icon Id="pgadmin3.ico" SourceFile="$(var.BUILDTREE)/pgadmin/include/images/pgAdmin3.ico" />
+<?endif?>
+                            </Shortcut>
+                            <ProgId Id="pgAdmin.1" Icon="pgadmin_exes.pgadmin3.exe" IconIndex="1">
+                                <Extension ContentType="text/plain" Id="sql">
+                                    <Verb Id="open" Command="Open" TargetFile="pgadmin_exes.pgadmin3.exe" Argument='-q -f "%1"' />
+                                </Extension>
+                            </ProgId>
+                        </Component>
+                       
+                        <Component Id="inis" Guid="{0287875A-F802-4327-9F3A-8A30D1316742}">
+                            <File Id="inis.settings.ini" Name="settings.ini" DiskId="1" Source="$(var.BUILDTREE)/pgadmin/settings.ini" />
+                        </Component>
+
+                        <Directory Id="PluginsDir" Name="plugins.d">
+                            <Component Id="plugins.d" Guid="{913B5AF0-D2E6-42C4-BA2D-ACACD5E7CFBF}">
+                                <File Id="plugins.d.plugins.ini" Name="plugins.ini" DiskId="1" Source="$(var.BUILDTREE)/plugins.d/plugins.ini" />
+                            </Component>
+                        </Directory>
+
+<?if $(var.BRANDED) = 1 ?>
+                        <Directory Id="BrandingDir" Name="Branding">
+                            <Component Id="branding" Guid="{8D0CFF66-0FF0-4265-8E05-281A43793D1A}">
+                                <File Id="branding.branding.ini" Name="branding.ini" DiskId="1" Source="$(var.BRANDINGDIR)/branding.ini" />
+                                <File Id="branding.icon.ico" Name="icon.ico" DiskId="1" Source="$(var.BRANDINGDIR)/icon.ico" />
+                                <File Id="branding.largeicon.gif" Name="largeicon.gif" DiskId="1" Source="$(var.BRANDINGDIR)/largeicon.gif" />
+                                <File Id="branding.smallicon.gif" Name="smallicon.gif" DiskId="1" Source="$(var.BRANDINGDIR)/smallicon.gif" />
+                                <File Id="branding.splashimage.gif" Name="splashimage.gif" DiskId="1" Source="$(var.BRANDINGDIR)/splashimage.gif" />
+                            </Component>
+                        </Directory>
+<?endif?>
+
+                        <Directory Id="DocsDir" Name="Docs">
+                            <Directory Id="en_usDocsDir" Name="en_US">
+                                <Component Id="en_us_docs" Guid="{0F3F0194-3BD0-4D3B-A47D-FCF0A9D20FAD}">
+                                    <File Id="en_us_docs.pgadmin3.chm" Name="pgadmin3.chm" DiskId="1" Source="$(var.BUILDTREE)/docs/en_US/_build/htmlhelp/pgadmin3.chm" KeyPath="yes" />
+                                    <Shortcut Id="en_us_docs.pgadmin3.chm" Directory="SMDir" Name="Documentation (English)" Description="pgAdmin documentation (English)" Show="normal" Advertise="yes" Icon="en_us_help.ico">
+                                        <Icon Id="en_us_help.ico" SourceFile="Resources/help.ico" />
+                                    </Shortcut>
+                                    <File Id="en_us_docs.pgadmin3.css" Name="pgadmin3.css" DiskId="1" Source="$(var.BUILDTREE)/docs/en_US/pgadmin3.css" />
+                                </Component>
+                                    
+                                <Directory Id="en_usHintsDir" Name="Hints">
+                                    <Component Id="en_us_hints" Guid="{BE681E7D-BE9C-44F3-A179-06120798B66D}">
+                                        <File Id="en_us_hints.autovacuum.html" Name="autovacuum.html" DiskId="1" Source="$(var.BUILDTREE)/docs/en_US/hints/autovacuum.html" />
+                                        <File Id="en_us_hints.conn_hba.html" Name="conn-hba.html" DiskId="1" Source="$(var.BUILDTREE)/docs/en_US/hints/conn-hba.html" />
+                                        <File Id="en_us_hints.conn_ident.html" Name="conn-ident.html" DiskId="1" Source="$(var.BUILDTREE)/docs/en_US/hints/conn-ident.html" />
+                                        <File Id="en_us_hints.conn_listen.html" Name="conn-listen.html" DiskId="1" Source="$(var.BUILDTREE)/docs/en_US/hints/conn-listen.html" />
+                                        <File Id="en_us_hints.encoding_ascii.html" Name="encoding-ascii.html" DiskId="1" Source="$(var.BUILDTREE)/docs/en_US/hints/encoding-ascii.html" />
+                                        <File Id="en_us_hints.encoding_unicode.html" Name="encoding-unicode.html" DiskId="1" Source="$(var.BUILDTREE)/docs/en_US/hints/encoding-unicode.html" />
+                                        <File Id="en_us_hints.fki.html" Name="fki.html" DiskId="1" Source="$(var.BUILDTREE)/docs/en_US/hints/fki.html" />
+                                        <File Id="en_us_hints.instrumentation.html" Name="instrumentation.html" DiskId="1" Source="$(var.BUILDTREE)/docs/en_US/hints/instrumentation.html" />
+                                        <File Id="en_us_hints.multiple.html" Name="multiple.html" DiskId="1" Source="$(var.BUILDTREE)/docs/en_US/hints/multiple.html" />
+                                        <File Id="en_us_hints.object_editing.html" Name="object-editing.html" DiskId="1" Source="$(var.BUILDTREE)/docs/en_US/hints/object-editing.html" />
+                                        <File Id="en_us_hints.pk.html" Name="pk.html" DiskId="1" Source="$(var.BUILDTREE)/docs/en_US/hints/pk.html" />
+                                        <File Id="en_us_hints.vacuum.html" Name="vacuum.html" DiskId="1" Source="$(var.BUILDTREE)/docs/en_US/hints/vacuum.html" />
+                                        <File Id="en_us_hints.vacuum_full.html" Name="vacuum-full.html" DiskId="1" Source="$(var.BUILDTREE)/docs/en_US/hints/vacuum-full.html" />
+                                        <File Id="en_us_hints.view_without_pk.html" Name="view-without-pk.html" DiskId="1" Source="$(var.BUILDTREE)/docs/en_US/hints/view-without-pk.html" />
+                                        <File Id="en_us_hints.saving_passwords.html" Name="saving-passwords.html" DiskId="1" Source="$(var.BUILDTREE)/docs/en_US/hints/saving-passwords.html" />
+                                    </Component>
+                                </Directory>
+                            </Directory>
+
+                           <Directory Id="cs_czDocsDir" Name="cs_CZ">
+
+                                <Component Id="cs_cz_docs" Guid="{73192FD4-CFCB-421F-B691-E24D3EDA39B4}">
+                                    <File Id="cs_cz_docs.pgadmin3.css" Name="pgadmin3.css" DiskId="1" Source="$(var.BUILDTREE)/docs/cs_CZ/pgadmin3.css" KeyPath="yes" />
+                                </Component>
+
+                                <Directory Id="cs_czHintsDir" Name="Hints">
+                                    <Component Id="cs_cz_hints" Guid="{CCB51372-6792-422B-9AE3-3F1D465D9CAF}">
+                                        <File Id="cs_cz_hints.autovacuum.html" Name="autovacuum.html" DiskId="1" Source="$(var.BUILDTREE)/docs/cs_CZ/hints/autovacuum.html" />
+                                        <File Id="cs_cz_hints.conn_hba.html" Name="conn-hba.html" DiskId="1" Source="$(var.BUILDTREE)/docs/cs_CZ/hints/conn-hba.html" />
+                                        <File Id="cs_cz_hints.conn_ident.html" Name="conn-ident.html" DiskId="1" Source="$(var.BUILDTREE)/docs/cs_CZ/hints/conn-ident.html" />
+                                        <File Id="cs_cz_hints.conn_listen.html" Name="conn-listen.html" DiskId="1" Source="$(var.BUILDTREE)/docs/cs_CZ/hints/conn-listen.html" />
+                                        <File Id="cs_cz_hints.encoding_ascii.html" Name="encoding-ascii.html" DiskId="1" Source="$(var.BUILDTREE)/docs/cs_CZ/hints/encoding-ascii.html" />
+                                        <File Id="cs_cz_hints.encoding_unicode.html" Name="encoding-unicode.html" DiskId="1" Source="$(var.BUILDTREE)/docs/cs_CZ/hints/encoding-unicode.html" />
+                                        <File Id="cs_cz_hints.fki.html" Name="fki.html" DiskId="1" Source="$(var.BUILDTREE)/docs/cs_CZ/hints/fki.html" />
+                                        <File Id="cs_cz_hints.instrumentation.html" Name="instrumentation.html" DiskId="1" Source="$(var.BUILDTREE)/docs/cs_CZ/hints/instrumentation.html" />
+                                        <File Id="cs_cz_hints.multiple.html" Name="multiple.html" DiskId="1" Source="$(var.BUILDTREE)/docs/cs_CZ/hints/multiple.html" />
+                                        <File Id="cs_cz_hints.pk.html" Name="pk.html" DiskId="1" Source="$(var.BUILDTREE)/docs/cs_CZ/hints/pk.html" />
+                                        <File Id="cs_cz_hints.vacuum.html" Name="vacuum.html" DiskId="1" Source="$(var.BUILDTREE)/docs/cs_CZ/hints/vacuum.html" />
+                                        <File Id="cs_cz_hints.view_without_pk.html" Name="view-without-pk.html" DiskId="1" Source="$(var.BUILDTREE)/docs/cs_CZ/hints/view-without-pk.html" />
+                                    </Component>
+                                </Directory>
+                            </Directory>
+
+
+
+                            <Directory Id="de_deDocsDir" Name="de_DE">
+                                <Component Id="de_de_docs" Guid="{C7AA6EA0-5C54-4C93-B1F8-909A1DCD9145}">
+                                    <File Id="de_de_docs.pgadmin3.css" Name="pgadmin3.css" DiskId="1" Source="$(var.BUILDTREE)/docs/de_DE/pgadmin3.css" KeyPath="yes" />
+                                </Component>
+                              
+                                <Directory Id="de_deHintsDir" Name="Hints">
+                                    <Component Id="de_de_hints" Guid="{DD497EB9-D3BA-44F6-AE98-7428D8E00385}">
+                                        <File Id="de_de_hints.autovacuum.html" Name="autovacuum.html" DiskId="1" Source="$(var.BUILDTREE)/docs/de_DE/hints/autovacuum.html" />
+                                        <File Id="de_de_hints.conn_hba.html" Name="conn-hba.html" DiskId="1" Source="$(var.BUILDTREE)/docs/de_DE/hints/conn-hba.html" />
+                                        <File Id="de_de_hints.conn_ident.html" Name="conn-ident.html" DiskId="1" Source="$(var.BUILDTREE)/docs/de_DE/hints/conn-ident.html" />
+                                        <File Id="de_de_hints.conn_listen.html" Name="conn-listen.html" DiskId="1" Source="$(var.BUILDTREE)/docs/de_DE/hints/conn-listen.html" />
+                                        <File Id="de_de_hints.encoding_ascii.html" Name="encoding-ascii.html" DiskId="1" Source="$(var.BUILDTREE)/docs/de_DE/hints/encoding-ascii.html" />
+                                        <File Id="de_de_hints.encoding_unicode.html" Name="encoding-unicode.html" DiskId="1" Source="$(var.BUILDTREE)/docs/de_DE/hints/encoding-unicode.html" />
+                                        <File Id="de_de_hints.fki.html" Name="fki.html" DiskId="1" Source="$(var.BUILDTREE)/docs/de_DE/hints/fki.html" />
+                                        <File Id="de_de_hints.instrumentation.html" Name="instrumentation.html" DiskId="1" Source="$(var.BUILDTREE)/docs/de_DE/hints/instrumentation.html" />
+                                        <File Id="de_de_hints.multiple.html" Name="multiple.html" DiskId="1" Source="$(var.BUILDTREE)/docs/de_DE/hints/multiple.html" />
+                                        <File Id="de_de_hints.pk.html" Name="pk.html" DiskId="1" Source="$(var.BUILDTREE)/docs/de_DE/hints/pk.html" />
+                                        <File Id="de_de_hints.vacuum.html" Name="vacuum.html" DiskId="1" Source="$(var.BUILDTREE)/docs/de_DE/hints/vacuum.html" />
+                                        <File Id="de_de_hints.view_without_pk.html" Name="view-without-pk.html" DiskId="1" Source="$(var.BUILDTREE)/docs/de_DE/hints/view-without-pk.html" />
+                                    </Component>
+                                </Directory>
+                            </Directory>
+
+                            <Directory Id="es_esDocsDir" Name="es_ES">
+                                <Component Id="es_es_docs" Guid="{69650067-4D69-41A7-9901-0F2FC0F54980}">
+                                  <File Id="es_es_docs.pgadmin3.css" Name="pgadmin3.css" DiskId="1" Source="$(var.BUILDTREE)/docs/es_ES/pgadmin3.css" KeyPath="yes" />
+                                </Component>
+                              
+                                <Directory Id="es_esHintsDir" Name="Hints">
+                                    <Component Id="es_es_hints" Guid="{CB351E39-A211-407E-A0C9-14F43AE9BA97}">
+                                        <File Id="es_es_hints.autovacuum.html" Name="autovacuum.html" DiskId="1" Source="$(var.BUILDTREE)/docs/es_ES/hints/autovacuum.html" />
+                                        <File Id="es_es_hints.conn_hba.html" Name="conn-hba.html" DiskId="1" Source="$(var.BUILDTREE)/docs/es_ES/hints/conn-hba.html" />
+                                        <File Id="es_es_hints.conn_ident.html" Name="conn-ident.html" DiskId="1" Source="$(var.BUILDTREE)/docs/es_ES/hints/conn-ident.html" />
+                                        <File Id="es_es_hints.conn_listen.html" Name="conn-listen.html" DiskId="1" Source="$(var.BUILDTREE)/docs/es_ES/hints/conn-listen.html" />
+                                        <File Id="es_es_hints.encoding_ascii.html" Name="encoding-ascii.html" DiskId="1" Source="$(var.BUILDTREE)/docs/es_ES/hints/encoding-ascii.html" />
+                                        <File Id="es_es_hints.encoding_unicode.html" Name="encoding-unicode.html" DiskId="1" Source="$(var.BUILDTREE)/docs/es_ES/hints/encoding-unicode.html" />
+                                        <File Id="es_es_hints.fki.html" Name="fki.html" DiskId="1" Source="$(var.BUILDTREE)/docs/es_ES/hints/fki.html" />
+                                        <File Id="es_es_hints.instrumentation.html" Name="instrumentation.html" DiskId="1" Source="$(var.BUILDTREE)/docs/es_ES/hints/instrumentation.html" />
+                                        <File Id="es_es_hints.multiple.html" Name="multiple.html" DiskId="1" Source="$(var.BUILDTREE)/docs/es_ES/hints/multiple.html" />
+                                        <File Id="es_ss_hints.object_editing.html" Name="object-editing.html" DiskId="1" Source="$(var.BUILDTREE)/docs/es_ES/hints/object-editing.html" />
+                                        <File Id="es_es_hints.pk.html" Name="pk.html" DiskId="1" Source="$(var.BUILDTREE)/docs/es_ES/hints/pk.html" />
+                                        <File Id="es_es_hints.vacuum.html" Name="vacuum.html" DiskId="1" Source="$(var.BUILDTREE)/docs/es_ES/hints/vacuum.html" />
+                                        <File Id="es_es_hints.view_without_pk.html" Name="view-without-pk.html" DiskId="1" Source="$(var.BUILDTREE)/docs/es_ES/hints/view-without-pk.html" />
+                                    </Component>
+                                </Directory>
+                            </Directory>
+
+                          <Directory Id="fi_fiDocsDir" Name="fi_FI">
+                                <Component Id="fi_fi_docs" Guid="{6F67F803-3E35-4AA9-AD0F-A5CA66AF386C}">
+                                    <File Id="fi_fi_docs.pgadmin3.css" Name="pgadmin3.css" DiskId="1" Source="$(var.BUILDTREE)/docs/fi_FI/pgadmin3.css" KeyPath="yes" />
+                                </Component>
+                            
+                                <Directory Id="fi_fiHintsDir" Name="Hints">
+                                    <Component Id="fi_fi_hints" Guid="{E829DE4C-C0EB-44F2-98BD-367DA58AAAC1}">
+                                        <File Id="fi_fi_hints.autovacuum.html" Name="autovacuum.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fi_FI/hints/autovacuum.html" />
+                                        <File Id="fi_fi_hints.conn_hba.html" Name="conn-hba.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fi_FI/hints/conn-hba.html" />
+                                        <File Id="fi_fi_hints.conn_ident.html" Name="conn-ident.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fi_FI/hints/conn-ident.html" />
+                                        <File Id="fi_fi_hints.conn_listen.html" Name="conn-listen.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fi_FI/hints/conn-listen.html" />
+                                        <File Id="fi_fi_hints.encoding_ascii.html" Name="encoding-ascii.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fi_FI/hints/encoding-ascii.html" />
+                                        <File Id="fi_fi_hints.encoding_unicode.html" Name="encoding-unicode.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fi_FI/hints/encoding-unicode.html" />
+                                        <File Id="fi_fi_hints.fki.html" Name="fki.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fi_FI/hints/fki.html" />
+                                        <File Id="fi_fi_hints.instrumentation.html" Name="instrumentation.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fi_FI/hints/instrumentation.html" />
+                                        <File Id="fi_fi_hints.multiple.html" Name="multiple.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fi_FI/hints/multiple.html" />
+                                        <File Id="fi_fi_hints.object_editing.html" Name="object-editing.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fi_FI/hints/object-editing.html" />
+                                        <File Id="fi_fi_hints.pk.html" Name="pk.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fi_FI/hints/pk.html" />
+                                        <File Id="fi_fi_hints.saving_passwords.html" Name="saving-passwords.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fi_FI/hints/saving-passwords.html" />
+                                        <File Id="fi_fi_hints.vacuum.html" Name="vacuum.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fi_FI/hints/vacuum.html" />
+                                        <File Id="fi_fi_hints.view_without_pk.html" Name="view-without-pk.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fi_FI/hints/view-without-pk.html" />
+                                    </Component>
+                                </Directory>
+                            </Directory>
+
+
+                           <Directory Id="fr_frDocsDir" Name="fr_FR">
+
+                                <Component Id="fr_fr_docs" Guid="{6B2F2052-1E50-48CF-B74C-9D767621A0D6}">
+                                    <File Id="fr_fr_docs.pgadmin3.css" Name="pgadmin3.css" DiskId="1" Source="$(var.BUILDTREE)/docs/fr_FR/pgadmin3.css" KeyPath="yes" />
+                                </Component>
+
+                                <Directory Id="fr_frHintsDir" Name="Hints">
+                                    <Component Id="fr_fr_hints" Guid="{BBEF0ADB-2A84-4A62-B9D1-F84E4FAEB9E7}">
+                                        <File Id="fr_fr_hints.autovacuum.html" Name="autovacuum.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fr_FR/hints/autovacuum.html" />
+                                        <File Id="fr_fr_hints.conn_hba.html" Name="conn-hba.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fr_FR/hints/conn-hba.html" />
+                                        <File Id="fr_fr_hints.conn_ident.html" Name="conn-ident.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fr_FR/hints/conn-ident.html" />
+                                        <File Id="fr_fr_hints.conn_listen.html" Name="conn-listen.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fr_FR/hints/conn-listen.html" />
+                                        <File Id="fr_fr_hints.encoding_ascii.html" Name="encoding-ascii.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fr_FR/hints/encoding-ascii.html" />
+                                        <File Id="fr_fr_hints.encoding_unicode.html" Name="encoding-unicode.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fr_FR/hints/encoding-unicode.html" />
+                                        <File Id="fr_fr_hints.fki.html" Name="fki.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fr_FR/hints/fki.html" />
+                                        <File Id="fr_fr_hints.instrumentation.html" Name="instrumentation.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fr_FR/hints/instrumentation.html" />
+                                        <File Id="fr_fr_hints.multiple.html" Name="multiple.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fr_FR/hints/multiple.html" />
+                                        <File Id="fr_fr_hints.pk.html" Name="pk.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fr_FR/hints/pk.html" />
+                                        <File Id="fr_fr_hints.vacuum.html" Name="vacuum.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fr_FR/hints/vacuum.html" />
+                                        <File Id="fr_fr_hints.view_without_pk.html" Name="view-without-pk.html" DiskId="1" Source="$(var.BUILDTREE)/docs/fr_FR/hints/view-without-pk.html" />
+                                    </Component>
+                                </Directory>
+                            </Directory>
+
+
+                            <Directory Id="sl_siDocsDir" Name="sl_SI">
+                                <Component Id="sl_si_docs" Guid="{7C266EDF-194D-4AA1-8918-1240B9DE6C6D}">
+                                    <File Id="sl_si_docs.pgadmin3.css" Name="pgadmin3.css" DiskId="1" Source="$(var.BUILDTREE)/docs/sl_SI/pgadmin3.css" KeyPath="yes" />
+                                </Component>
+                              
+                                <Directory Id="sl_siHintsDir" Name="Hints">
+                                    <Component Id="sl_si_hints" Guid="{6BA2D27B-E5E4-40BB-91F3-C99A087C53D1}">
+                                        <File Id="sl_si_hints.autovacuum.html" Name="autovacuum.html" DiskId="1" Source="$(var.BUILDTREE)/docs/sl_SI/hints/autovacuum.html" />
+                                        <File Id="sl_si_hints.conn_hba.html" Name="conn-hba.html" DiskId="1" Source="$(var.BUILDTREE)/docs/sl_SI/hints/conn-hba.html" />
+                                        <File Id="sl_si_hints.conn_ident.html" Name="conn-ident.html" DiskId="1" Source="$(var.BUILDTREE)/docs/sl_SI/hints/conn-ident.html" />
+                                        <File Id="sl_si_hints.conn_listen.html" Name="conn-listen.html" DiskId="1" Source="$(var.BUILDTREE)/docs/sl_SI/hints/conn-listen.html" />
+                                        <File Id="sl_si_hints.encoding_ascii.html" Name="encoding-ascii.html" DiskId="1" Source="$(var.BUILDTREE)/docs/sl_SI/hints/encoding-ascii.html" />
+                                        <File Id="sl_si_hints.encoding_unicode.html" Name="encoding-unicode.html" DiskId="1" Source="$(var.BUILDTREE)/docs/sl_SI/hints/encoding-unicode.html" />
+                                        <File Id="sl_si_hints.fki.html" Name="fki.html" DiskId="1" Source="$(var.BUILDTREE)/docs/sl_SI/hints/fki.html" />
+                                        <File Id="sl_si_hints.instrumentation.html" Name="instrumentation.html" DiskId="1" Source="$(var.BUILDTREE)/docs/sl_SI/hints/instrumentation.html" />
+                                        <File Id="sl_si_hints.multiple.html" Name="multiple.html" DiskId="1" Source="$(var.BUILDTREE)/docs/sl_SI/hints/multiple.html" />
+                                        <File Id="sl_si_hints.pk.html" Name="pk.html" DiskId="1" Source="$(var.BUILDTREE)/docs/sl_SI/hints/pk.html" />
+                                        <File Id="sl_si_hints.vacuum.html" Name="vacuum.html" DiskId="1" Source="$(var.BUILDTREE)/docs/sl_SI/hints/vacuum.html" />
+                                        <File Id="sl_si_hints.view_without_pk.html" Name="view-without-pk.html" DiskId="1" Source="$(var.BUILDTREE)/docs/sl_SI/hints/view-without-pk.html" />
+                                    </Component>
+                                </Directory>
+                            </Directory>
+
+                           <Directory Id="zh_cnDocsDir" Name="zh_CN">
+                                <Component Id="zh_cn_docs" Guid="{F229D949-93D2-4EBF-8BD8-3E401A4C8495}">
+                                    <File Id="zh_cn_docs.pgadmin3.css" Name="pgadmin3.css" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_CN/pgadmin3.css" KeyPath="yes" />
+                                </Component>
+                             
+                                <Directory Id="zh_cnHintsDir" Name="Hints">
+                                    <Component Id="zh_cn_hints" Guid="{25892801-FFD2-4862-A3BD-778852EB7944}">
+                                        <File Id="zh_cn_hints.autovacuum.html" Name="autovacuum.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_CN/hints/autovacuum.html" />
+                                        <File Id="zh_cn_hints.conn_hba.html" Name="conn-hba.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_CN/hints/conn-hba.html" />
+                                        <File Id="zh_cn_hints.conn_ident.html" Name="conn-ident.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_CN/hints/conn-ident.html" />
+                                        <File Id="zh_cn_hints.conn_listen.html" Name="conn-listen.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_CN/hints/conn-listen.html" />
+                                        <File Id="zh_cn_hints.encoding_ascii.html" Name="encoding-ascii.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_CN/hints/encoding-ascii.html" />
+                                        <File Id="zh_cn_hints.encoding_unicode.html" Name="encoding-unicode.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_CN/hints/encoding-unicode.html" />
+                                        <File Id="zh_cn_hints.fki.html" Name="fki.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_CN/hints/fki.html" />
+                                        <File Id="zh_cn_hints.instrumentation.html" Name="instrumentation.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_CN/hints/instrumentation.html" />
+                                        <File Id="zh_cn_hints.multiple.html" Name="multiple.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_CN/hints/multiple.html" />
+                                        <File Id="zh_cn_hints.pk.html" Name="pk.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_CN/hints/pk.html" />
+                                        <File Id="zh_cn_hints.vacuum.html" Name="vacuum.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_CN/hints/vacuum.html" />
+                                        <File Id="zh_cn_hints.view_without_pk.html" Name="view-without-pk.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_CN/hints/view-without-pk.html" />
+                                        <File Id="zh_cn_hints.object_editing.html" Name="object-editing.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_CN/hints/object-editing.html" />
+                                        <File Id="zh_cn_hints.saving_passwords.html" Name="saving-passwords.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_CN/hints/saving-passwords.html" />
+                                    </Component>
+                                </Directory>
+                            </Directory>
+
+                           <Directory Id="zh_twDocsDir" Name="zh_TW">
+                                <Component Id="zh_tw_docs" Guid="{35BF80BB-1341-4243-B233-A4EAA1948FDD}">
+                                    <File Id="zh_tw_docs.pgadmin3.css" Name="pgadmin3.css" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_tw/pgadmin3.css" KeyPath="yes" />
+                                </Component>
+                             
+                                <Directory Id="zh_twHintsDir" Name="Hints">
+                                    <Component Id="zh_tw_hints" Guid="{97FD37AC-5A1C-42CF-BA92-C09C0E9D3603}">
+                                        <File Id="zh_tw_hints.autovacuum.html" Name="autovacuum.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_TW/hints/autovacuum.html" />
+                                        <File Id="zh_tw_hints.conn_hba.html" Name="conn-hba.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_TW/hints/conn-hba.html" />
+                                        <File Id="zh_tw_hints.conn_ident.html" Name="conn-ident.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_TW/hints/conn-ident.html" />
+                                        <File Id="zh_tw_hints.conn_listen.html" Name="conn-listen.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_TW/hints/conn-listen.html" />
+                                        <File Id="zh_tw_hints.encoding_ascii.html" Name="encoding-ascii.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_TW/hints/encoding-ascii.html" />
+                                        <File Id="zh_tw_hints.encoding_unicode.html" Name="encoding-unicode.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_TW/hints/encoding-unicode.html" />
+                                        <File Id="zh_tw_hints.fki.html" Name="fki.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_TW/hints/fki.html" />
+                                        <File Id="zh_tw_hints.instrumentation.html" Name="instrumentation.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_TW/hints/instrumentation.html" />
+                                        <File Id="zh_tw_hints.multiple.html" Name="multiple.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_TW/hints/multiple.html" />
+                                        <File Id="zh_tw_hints.pk.html" Name="pk.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_TW/hints/pk.html" />
+                                        <File Id="zh_tw_hints.vacuum.html" Name="vacuum.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_TW/hints/vacuum.html" />
+                                        <File Id="zh_tw_hints.view_without_pk.html" Name="view-without-pk.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_TW/hints/view-without-pk.html" />
+                                        <File Id="zh_tw_hints.object_editing.html" Name="object-editing.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_TW/hints/object-editing.html" />
+                                        <File Id="zh_tw_hints.saving_passwords.html" Name="saving-passwords.html" DiskId="1" Source="$(var.BUILDTREE)/docs/zh_TW/hints/saving-passwords.html" />
+                                    </Component>
+                                </Directory>
+                            </Directory>
+
+                        </Directory>
+
+                        <Component Id="postgresql_exes" Guid="{40EBBB0E-C8BE-4943-ADBA-D10FEB985E77}">
+                            <File Id="postgresql_exes.psql.exe" Name="psql.exe" DiskId="1" Source="$(var.PGDIR)/bin/psql.exe" />
+                            <File Id="postgresql_exes.pg_dump.exe" Name="pg_dump.exe" DiskId="1" Source="$(var.PGDIR)/bin/pg_dump.exe" />
+                            <File Id="postgresql_exes.pg_dumpall.exe" Name="pg_dumpall.exe" DiskId="1" Source="$(var.PGDIR)/bin/pg_dumpall.exe" />
+                            <File Id="postgresql_exes.pg_restore.exe" Name="pg_restore.exe" DiskId="1" Source="$(var.PGDIR)/bin/pg_restore.exe" />
+                        </Component>
+
+                        <Directory Id="i18nDir" Name="i18n">
+
+                            <Component Id="pgadmin_il8n" Guid="{D0E2DB7F-3152-4E17-A81F-8CFECFF33BFD}">
+                                <File Id="pgadmin_il8n.pgadmin3.lng" Name="pgadmin3.lng" DiskId="1" Source="$(var.BUILDTREE)/i18n/pgadmin3.lng" />
+                                <File Id="pgadmin_il8n.pg_settings.csv" Name="pg_settings.csv" DiskId="1" Source="$(var.BUILDTREE)/i18n/pg_settings.csv" />
+                            </Component>
+
+                            <?include i18ndata.wxs ?>
+
+                        </Directory>
+
+                    </Directory>
+                </Directory>
+            </Directory>
+            <Directory Id="ProgramMenuFolder" Name="." SourceName="Programs">
+                <Directory Id="SMDir" Name="$(var.APPNAME) $(var.APPVERSION)">
+                    <Component Id="smdir" Guid="{DA66B216-9098-485F-B7DF-68437019F51C}">
+                        <RegistryValue KeyPath="yes" Type="string" Root="HKCU" Key="Software\$(var.APPNAME)\SMDir Created" Value="y" />
+                        <RemoveFolder Id="SMDir" On="uninstall" />
+                    </Component>
+                </Directory>
+            </Directory>
+        </Directory>
+
+<!-- Features -->
+
+        <Feature Id="base" Title="$(var.APPNAME) - $(var.APPCOMMENTS)" Level="1" Description="$(var.APPDESCRIPTION)" Display="expand" ConfigurableDirectory="BASEDIR" AllowAdvertise="no">
+
+            <Feature Id="pgadmin3" Title="$(var.APPNAME)" Description="The $(var.APPNAME) management and administration console." Display="expand" Level="1">
+                <ComponentRef Id="core_libs" />
+                <MergeRef Id="CRT" />
+                <ComponentRef Id="pgadmin_exes" />
+                <ComponentRef Id="inis" />
+                <ComponentRef Id="plugins.d" />
+<?if $(var.BRANDED) = 1 ?>
+                <ComponentRef Id="branding" />
+<?endif?>
+                <ComponentRef Id="cs_cz_docs" />
+                <ComponentRef Id="cs_cz_hints" />
+                <ComponentRef Id="de_de_docs" />
+                <ComponentRef Id="de_de_hints" />
+                <ComponentRef Id="en_us_docs" />
+                <ComponentRef Id="en_us_hints" />
+                <ComponentRef Id="es_es_docs" />
+                <ComponentRef Id="es_es_hints" />
+                <ComponentRef Id="fi_fi_docs" />
+                <ComponentRef Id="fi_fi_hints" />
+                <ComponentRef Id="fr_fr_docs" />
+                <ComponentRef Id="fr_fr_hints" />
+                <ComponentRef Id="sl_si_docs" />
+                <ComponentRef Id="sl_si_hints" />
+                <ComponentRef Id="zh_cn_docs" />
+                <ComponentRef Id="zh_cn_hints" />
+                <ComponentRef Id="zh_tw_docs" />
+                <ComponentRef Id="zh_tw_hints" />
+                <ComponentRef Id="pgadmin_il8n" />
+                <ComponentRef Id="smdir" />
+                        
+                <Feature Id="postgresql_utilities" Title="PostgreSQL Utilties" Description="PostgreSQL's pg_dump and pg_restore utilties used by $(var.APPNAME) to dump and restore databases." Level="1">
+                    <ComponentRef Id="postgresql_exes" />
+                </Feature>
+            </Feature>
+
+            <Feature Id="i18n" Title="Internationalisation" Description="Multi language support for $(var.APPNAME) applications." Level="1">
+                <?include i18nrefs.wxs ?>
+            </Feature>
+
+        </Feature>
+
+        <Media Id="1" EmbedCab="yes" Cabinet="installer.cab"/>
+
+<!-- Properties -->
+
+        <Property Id="WIXUI_INSTALLDIR" Value="BASEDIR" />
+
+<!-- UI -->
+
+        <UIRef Id="WixUI_FeatureTree" />
+        <WixVariable Id="WixUILicenseRtf" Value="resources/licence.rtf" />
+        <WixVariable Id="WixUIDialogBmp" Value="resources/background.bmp" />
+        <WixVariable Id="WixUIBannerBmp" Value="resources/banner.bmp" />
+
+    </Product>
+</Wix>
