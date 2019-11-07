@@ -483,7 +483,8 @@ void pgObject::ShowDependencies(frmMain *form, ctlListView *Dependencies, const 
 	*                        la.lanname, rw.rulename, ns.nspname)
 	*     END
 	*/
-	ShowDependency(GetDatabase(), Dependencies,
+	/*ABDUL:BEGIN*/
+	/*	ShowDependency(GetDatabase(), Dependencies,
 	               wxT("SELECT DISTINCT dep.deptype, dep.refclassid, cl.relkind, ad.adbin, ad.adsrc, \n")
 	               wxT("       CASE WHEN cl.relkind IS NOT NULL THEN cl.relkind || COALESCE(dep.refobjsubid::text, '')\n")
 	               wxT("            WHEN tg.oid IS NOT NULL THEN 'T'::text\n")
@@ -518,9 +519,54 @@ void pgObject::ShowDependencies(frmMain *form, ctlListView *Dependencies, const 
 	               wxT("  LEFT JOIN pg_language la ON dep.refobjid=la.oid\n")
 	               wxT("  LEFT JOIN pg_namespace ns ON dep.refobjid=ns.oid\n")
 	               wxT("  LEFT JOIN pg_attrdef ad ON ad.adrelid=att.attrelid AND ad.adnum=att.attnum\n")
-	               + where, wxT("refclassid"));
-
+	               + where, wxT("refclassid"));*/				   
 	pgConn *conn = GetConnection();
+	
+	wxString sql;
+	if(conn && conn->BackendMinimumVersion(12, 0)) {
+		sql = wxT("SELECT DISTINCT dep.deptype, dep.refclassid, cl.relkind, ad.adbin, pg_catalog.pg_get_expr(ad.adbin, ad.adrelid) AS adsrc, \n");
+	}
+	else
+	{
+		sql = wxT("SELECT DISTINCT dep.deptype, dep.refclassid, cl.relkind, ad.adbin, ad.adsrc, \n");
+	}
+	sql += wxT("       CASE WHEN cl.relkind IS NOT NULL THEN cl.relkind || COALESCE(dep.refobjsubid::text, '')\n")
+	       wxT("            WHEN tg.oid IS NOT NULL THEN 'T'::text\n")
+	       wxT("            WHEN ty.oid IS NOT NULL THEN 'y'::text\n")
+	       wxT("            WHEN ns.oid IS NOT NULL THEN 'n'::text\n")
+	       wxT("            WHEN pr.oid IS NOT NULL THEN 'p'::text\n")
+	       wxT("            WHEN la.oid IS NOT NULL THEN 'l'::text\n")
+	       wxT("            WHEN rw.oid IS NOT NULL THEN 'R'::text\n")
+	       wxT("            WHEN co.oid IS NOT NULL THEN 'C'::text || contype\n")
+	       wxT("            WHEN ad.oid IS NOT NULL THEN 'A'::text\n")
+	       wxT("            ELSE '' END AS type,\n")
+	       wxT("       COALESCE(coc.relname, clrw.relname) AS ownertable,\n")
+	       wxT("       CASE WHEN cl.relname IS NOT NULL OR att.attname IS NOT NULL THEN cl.relname || '.' || att.attname\n")
+	       wxT("            ELSE COALESCE(cl.relname, co.conname, pr.proname, tg.tgname, ty.typname, la.lanname, rw.rulename, ns.nspname)\n")
+	       wxT("       END AS refname,\n")
+	       wxT("       COALESCE(nsc.nspname, nso.nspname, nsp.nspname, nst.nspname, nsrw.nspname) AS nspname\n")
+	       wxT("  FROM pg_depend dep\n")
+	       wxT("  LEFT JOIN pg_class cl ON dep.refobjid=cl.oid\n")
+	       wxT("  LEFT JOIN pg_attribute att ON dep.refobjid=att.attrelid AND dep.refobjsubid=att.attnum\n")
+	       wxT("  LEFT JOIN pg_namespace nsc ON cl.relnamespace=nsc.oid\n")
+	       wxT("  LEFT JOIN pg_proc pr ON dep.refobjid=pr.oid\n")
+	       wxT("  LEFT JOIN pg_namespace nsp ON pr.pronamespace=nsp.oid\n")
+	       wxT("  LEFT JOIN pg_trigger tg ON dep.refobjid=tg.oid\n")
+	       wxT("  LEFT JOIN pg_type ty ON dep.refobjid=ty.oid\n")
+	       wxT("  LEFT JOIN pg_namespace nst ON ty.typnamespace=nst.oid\n")
+	       wxT("  LEFT JOIN pg_constraint co ON dep.refobjid=co.oid\n")
+	       wxT("  LEFT JOIN pg_class coc ON co.conrelid=coc.oid\n")
+	       wxT("  LEFT JOIN pg_namespace nso ON co.connamespace=nso.oid\n")
+	       wxT("  LEFT JOIN pg_rewrite rw ON dep.refobjid=rw.oid\n")
+	       wxT("  LEFT JOIN pg_class clrw ON clrw.oid=rw.ev_class\n")
+	       wxT("  LEFT JOIN pg_namespace nsrw ON clrw.relnamespace=nsrw.oid\n")
+	       wxT("  LEFT JOIN pg_language la ON dep.refobjid=la.oid\n")
+	       wxT("  LEFT JOIN pg_namespace ns ON dep.refobjid=ns.oid\n")
+	       wxT("  LEFT JOIN pg_attrdef ad ON ad.adrelid=att.attrelid AND ad.adnum=att.attnum\n")
+				+ where;
+		
+	ShowDependency(GetDatabase(), Dependencies, sql, wxT("refclassid"));
+	/*ABDUL:END*/		
 	if (conn)
 	{
 		if (where.Find(wxT("subid")) < 0 && conn->BackendMinimumVersion(8, 1))

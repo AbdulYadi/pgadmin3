@@ -1398,8 +1398,8 @@ wxString dlgRepClusterUpgrade::GetSql()
 		{
 			// Create missing tables and columns
 			// we don't expect column names and types to change
-
-			pgSetIterator srcCols(remoteConn,
+			/*ABDUL:BEGIN*/
+			/*pgSetIterator srcCols(remoteConn,
 			                      wxT("SELECT relname, attname, attndims, atttypmod, attnotnull, adsrc, ty.typname, tn.nspname as typnspname,\n")
 			                      wxT("  (SELECT count(1) FROM pg_type t2 WHERE t2.typname=ty.typname) > 1 AS isdup\n")
 			                      wxT("  FROM pg_attribute\n")
@@ -1422,8 +1422,43 @@ wxString dlgRepClusterUpgrade::GetSql()
 			                       wxT(" WHERE n.nspname = ") + qtDbString(wxT("_") + cluster->GetName()) +
 			                       wxT("   AND attnum>0 and relkind='r'\n")
 			                       wxT(" ORDER BY (relname != 'sl_confirm'), relname, attname")
-			                      );
-
+			                      );*/						
+			wxString sql;
+			if( remoteConn->BackendMinimumVersion(12, 0) ) {
+				sql = wxT("SELECT relname, attname, attndims, atttypmod, attnotnull, pg_catalog.pg_get_expr(d.adbin, d.adrelid) AS adsrc, ty.typname, tn.nspname as typnspname,\n");
+			}
+			else
+			{
+				sql = wxT("SELECT relname, attname, attndims, atttypmod, attnotnull, adsrc, ty.typname, tn.nspname as typnspname,\n");
+			}
+			sql += wxT("  (SELECT count(1) FROM pg_type t2 WHERE t2.typname=ty.typname) > 1 AS isdup\n")
+			       wxT("  FROM pg_attribute\n")
+			       wxT("  JOIN pg_class c ON c.oid=attrelid\n")
+			       wxT("  JOIN pg_namespace n ON n.oid=relnamespace")
+			       wxT("  LEFT JOIN pg_attrdef d ON adrelid=attrelid and adnum=attnum\n")
+			       wxT("  JOIN pg_type ty ON ty.oid=atttypid\n")
+			       wxT("  JOIN pg_namespace tn ON tn.oid=ty.typnamespace\n")
+			       wxT(" WHERE n.nspname = ") + qtDbString(remoteCluster) +
+			       wxT("   AND attnum>0 and relkind='r'\n")
+			       wxT(" ORDER BY (relname != 'sl_confirm'), relname, attname");						
+			pgSetIterator srcCols(remoteConn, sql);
+			
+			if( remoteConn->BackendMinimumVersion(12, 0) ) {
+				sql = wxT("SELECT relname, attname, pg_catalog.pg_get_expr(d.adbin, d.adrelid) AS adsrc\n");
+			}
+			else
+			{
+				sql = wxT("SELECT relname, attname, adsrc\n");
+			}
+			sql += wxT("  FROM pg_attribute\n")
+			       wxT("  JOIN pg_class c ON c.oid=attrelid\n")
+			       wxT("  JOIN pg_namespace n ON n.oid=relnamespace")
+			       wxT("  LEFT JOIN pg_attrdef d ON adrelid=attrelid and adnum=attnum\n")
+			       wxT(" WHERE n.nspname = ") + qtDbString(wxT("_") + cluster->GetName()) +
+			       wxT("   AND attnum>0 and relkind='r'\n")
+			       wxT(" ORDER BY (relname != 'sl_confirm'), relname, attname");
+			pgSetIterator destCols(connection, sql);
+			/*ABDUL:END*/
 			if (!destCols.RowsLeft())
 				return wxT("error");
 

@@ -2324,9 +2324,10 @@ sqlTable::sqlTable(pgConn *conn, pgQueryThread *_thread, const wxString &tabName
 		delete allColsSet;
 	}
 
-	pgSet *colSet = connection->ExecuteSet(
+	/*ABDUL:BEGIN*/
+	/*pgSet *colSet = connection->ExecuteSet(
 	                    wxT("SELECT n.nspname AS nspname, relname, format_type(t.oid,NULL) AS typname, format_type(t.oid, att.atttypmod) AS displaytypname, ")
-	                    wxT("nt.nspname AS typnspname, attname, attnum, COALESCE(b.oid, t.oid) AS basetype, atthasdef, adsrc,\n")
+	                    wxT("nt.nspname AS typnspname, attname, attnum, COALESCE(b.oid, t.oid) AS basetype, atthasdef, adsrc,\n")						
 	                    wxT("       CASE WHEN t.typbasetype::oid=0 THEN att.atttypmod else t.typtypmod END AS typmod,\n")
 	                    wxT("       CASE WHEN t.typbasetype::oid=0 THEN att.attlen else t.typlen END AS typlen\n")
 	                    wxT("  FROM pg_attribute att\n")
@@ -2337,9 +2338,29 @@ sqlTable::sqlTable(pgConn *conn, pgQueryThread *_thread, const wxString &tabName
 	                    wxT("  LEFT OUTER JOIN pg_type b ON b.oid=t.typbasetype\n")
 	                    wxT("  LEFT OUTER JOIN pg_attrdef def ON adrelid=attrelid AND adnum=attnum\n")
 	                    wxT(" WHERE attnum > 0 AND NOT attisdropped AND attrelid=") + NumToStr(relid) + wxT("::oid\n")
-	                    wxT(" ORDER BY attnum"));
-
-
+	                    wxT(" ORDER BY attnum"));*/	
+	wxString query = wxT("SELECT n.nspname AS nspname, relname, format_type(t.oid,NULL) AS typname, format_type(t.oid, att.atttypmod) AS displaytypname, ")
+		wxT("nt.nspname AS typnspname, attname, attnum, COALESCE(b.oid, t.oid) AS basetype, atthasdef, ");//, adsrc,\n");
+	if( connection->BackendMinimumVersion(12, 0) ) {
+		query += wxT("pg_catalog.pg_get_expr(def.adbin, def.adrelid) AS adsrc,\n");
+	}
+	else
+	{
+		query += wxT("adsrc,\n");
+	}
+	query += wxT("       CASE WHEN t.typbasetype::oid=0 THEN att.atttypmod else t.typtypmod END AS typmod,\n")
+	         wxT("       CASE WHEN t.typbasetype::oid=0 THEN att.attlen else t.typlen END AS typlen\n")
+	         wxT("  FROM pg_attribute att\n")
+	         wxT("  JOIN pg_type t ON t.oid=att.atttypid\n")
+	         wxT("  JOIN pg_namespace nt ON nt.oid=t.typnamespace\n")
+	         wxT("  JOIN pg_class c ON c.oid=attrelid\n")
+	         wxT("  JOIN pg_namespace n ON n.oid=relnamespace\n")
+	         wxT("  LEFT OUTER JOIN pg_type b ON b.oid=t.typbasetype\n")
+	         wxT("  LEFT OUTER JOIN pg_attrdef def ON adrelid=attrelid AND adnum=attnum\n")
+	         wxT(" WHERE attnum > 0 AND NOT attisdropped AND attrelid=") + NumToStr(relid) + wxT("::oid\n")
+	         wxT(" ORDER BY attnum");		
+	pgSet *colSet = connection->ExecuteSet(query);
+	/*ABDUL:END*/
 
 	bool canInsert = false;
 	if (colSet)

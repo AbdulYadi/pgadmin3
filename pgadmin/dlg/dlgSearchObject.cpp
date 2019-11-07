@@ -529,6 +529,7 @@ void dlgSearchObject::OnSearch(wxCommandEvent &ev)
 		if (nextMode)
 			searchSQL += wxT("UNION \n");
 		nextMode = true;
+		/*ABDUL:BEGIN*/
 		searchSQL += wxT("SELECT * FROM (  ") // Function's source code
 		             wxT("	SELECT CASE WHEN t.typname = 'trigger' THEN 'Trigger Functions' ELSE 'Functions' END AS type, p.proname as objectname,  ")
 		             wxT("	':Schemas/' || n.nspname || '/' || case when t.typname = 'trigger' then ':Trigger Functions' else ':Functions' end || '/' || p.proname as path, n.nspname ")
@@ -551,7 +552,15 @@ void dlgSearchObject::OnSearch(wxCommandEvent &ev)
 		             wxT("inner join pg_class t on a.attrelid = t.oid and t.relkind in ('r','v','m') ")
 		             wxT("left join pg_namespace n on t.relnamespace = n.oid ")
 		             wxT("where a.attnum > 0 ")
-		             wxT("  and (ty.typname ilike ") + txtPatternStr + wxT(" or ad.adsrc ilike ") + txtPatternStr + wxT(") ")
+		             wxT("  and (ty.typname ilike ") + txtPatternStr; //+ wxT(" or ad.adsrc ilike ") + txtPatternStr + wxT(") ")					 
+				if(currentdb->BackendMinimumVersion(12, 0)) {
+					searchSQL += wxT(" or pg_catalog.pg_get_expr(ad.adbin, ad.adrelid) ilike "); 
+				}
+				else
+				{
+					searchSQL += wxT(" or ad.adsrc ilike ");
+				}
+				searchSQL += txtPatternStr + wxT(") ")
 		             wxT("UNION ") // View's definition
 		             wxT("SELECT 'Views', c.relname, ")
 		             wxT("':Schemas/' || n.nspname || '/:Views/' || c.relname, n.nspname ")
@@ -578,6 +587,7 @@ void dlgSearchObject::OnSearch(wxCommandEvent &ev)
 		             wxT(" left join pg_namespace n on c.relnamespace = n.oid ")
 		             wxT(" where a.attname ilike ") + txtPatternStr + wxT(" ");
 		// TODO: search for other object's definitions (indexes, constraints and so on)
+		/*ABDUL:END*/
 		searchSQL += wxT(") sd \n");
 	} // search definitions
 
