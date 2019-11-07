@@ -1,7 +1,7 @@
 **# pgAdmin3 LTS by BigSQL README #**
 
 This is a fork of the pgAdmin3 project that aims to continue to support 
-PostgreSQL 8.4 thru 9.6 with Windows and OSX Binaries.  We are in basic
+PostgreSQL 8.4 thru 12.0 with Windows and OSX Binaries.  We are in basic
 maintenance mode and don't expect to be adding major new features.   We expect
 that over time users will mostly migrate to using pgAdmin4 Web as that
 matures and stabilizes.
