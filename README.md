@@ -28,7 +28,10 @@ pgAdmin3 is Free Software released under the PostgreSQL License.
 
 **# README by Datatrans #**
 
-Codes have been changed to adapt PostgreSQL internal changes up to version 12.0.
+Codes have been changed to adapt PostgreSQL internal changes up to version 12.0:
+- No more relhasoids in pg_class.
+- No more cache_value, is_cycled, is_called in sequence object (since PostgreSQL 11).
+- No more adsrc in pg_attrdef, it should be calculated as pg_catalog.pg_get_expr(adbin, adrelid) instead.
 
 Typical configure option
 ------------------------
