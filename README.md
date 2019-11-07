@@ -28,7 +28,7 @@ pgAdmin3 is Free Software released under the PostgreSQL License.
 
 **# README by Datatrans #**
 
-Codes has been changed to adapat PostgreSQL internal changes up to version 12.0.
+Codes have been changed to adapt PostgreSQL internal changes up to version 12.0.
 
 Typical configure option
 ------------------------
