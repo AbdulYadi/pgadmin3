@@ -335,7 +335,7 @@ wxString pgTable::GetSql(ctlTree *browser)
 		// of type (9.0 material)
 		if (ofTypeOid > 0)
 			sql += wxT("\nOF ") + qtIdent(ofType);
-
+				
 		// Get a count of the constraints.
 		int consCount = 0;
 		pgCollection *constraints = browser->FindCollection(primaryKeyFactory, GetId());
@@ -435,7 +435,7 @@ wxString pgTable::GetSql(ctlTree *browser)
 					columnPrivileges += column->GetPrivileges();
 				}
 			}
-		}
+		}//if (columns)
 
 		// Now iterate the constraints
 		if (constraints)
@@ -487,12 +487,61 @@ wxString pgTable::GetSql(ctlTree *browser)
 		if (!prevComment.IsEmpty())
 			cols_sql += wxT(" -- ") + firstLineOnly(prevComment);
 
+	/*ABDUL:BEGIN*/	
+		wxString partitionBy, partitionOf;
+		if (GetConnection()->BackendMinimumVersion(12, 0)) {
+			pgSet *set = ExecuteSet(
+				wxT("SELECT CASE WHEN p.partstrat IS NOT NULL THEN 'PARTITION BY ' ||")
+					wxT("(CASE WHEN p.partstrat = 'h' THEN 'HASH' WHEN p.partstrat = 'l' THEN 'LIST' WHEN p.partstrat = 'r' THEN 'BY RANGE'")
+					wxT(" ELSE 'UNKNOWN' END)")
+					wxT(" || ' (' || attr.fields || ')'")
+					wxT(" ELSE '' END AS partitionby")
+				wxT(",CASE WHEN c.relispartition THEN 'PARTITION OF ' || COALESCE(nparent.nspname || '.' || parent.relname, 'UNKNOWN') ELSE '' END")
+					wxT(" || ' ' || pg_get_expr(c.relpartbound, c.oid, true) AS partitionof")
+				wxT(" FROM pg_class c")
+				wxT(" INNER JOIN pg_namespace n ON n.oid = c.relnamespace")
+				wxT(" LEFT JOIN pg_partitioned_table p ON p.partrelid = c.oid")
+				wxT(" LEFT JOIN LATERAL (")
+					wxT("SELECT string_agg(a.attname, ',') as fields")
+					wxT(" FROM pg_attribute a")
+					wxT(" WHERE p.partnatts>0 AND a.attrelid = p.partrelid AND a.attnum = any(p.partattrs)")
+				wxT(") attr ON true")
+				wxT(" LEFT JOIN pg_inherits i ON i.inhrelid = p.partrelid")
+				wxT(" LEFT JOIN pg_class parent ON parent.oid = c.oid")
+				wxT(" LEFT JOIN pg_namespace nparent ON nparent.oid = parent.relnamespace")
+				wxT(" WHERE c.oid =") + GetOidStr()
+				);
+			if (set)
+			{
+				partitionBy = set->GetVal(0);
+				partitionOf = set->GetVal(1);
+				delete set;
+			}
+			if( !partitionOf.IsNull() )
+			{
+				sql += wxT(" ") + partitionOf;	
+			}					
+		}
+	/*ABDUL:END*/
+
 		sql += wxT("\n(\n") + cols_sql + wxT("\n)");
 
-		if (GetInheritedTableCount())
+	/*ABDUL:BEGIN*/
+		/*if (GetInheritedTableCount())
 		{
 			sql += wxT("\nINHERITS (") + GetQuotedInheritedTables() + wxT(")");
+		}*/
+		if (GetConnection()->BackendMinimumVersion(12, 0)) {
+			if( !partitionBy.IsNull() )
+			{
+				sql += wxT(" ") + partitionBy;
+			}
 		}
+		else if (GetInheritedTableCount())
+		{
+			sql += wxT("\nINHERITS (") + GetQuotedInheritedTables() + wxT(")");
+		}		
+	/*ABDUL:END*/	
 
 		if (GetConnection()->BackendMinimumVersion(8, 2))
 		{
@@ -709,7 +758,7 @@ wxString pgTable::GetSql(ctlTree *browser)
 		    AppendStuffNoSql(sql, browser, partitionFactory);
 		}
 		 */
-	}
+	}//if (sql.IsNull())
 	return sql;
 }
 
