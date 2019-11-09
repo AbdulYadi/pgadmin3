@@ -492,7 +492,7 @@ wxString pgTable::GetSql(ctlTree *browser)
 		if (GetConnection()->BackendMinimumVersion(12, 0)) {
 			pgSet *set = ExecuteSet(
 				wxT("SELECT CASE WHEN p.partstrat IS NOT NULL THEN 'PARTITION BY ' ||")
-					wxT("(CASE WHEN p.partstrat = 'h' THEN 'HASH' WHEN p.partstrat = 'l' THEN 'LIST' WHEN p.partstrat = 'r' THEN 'BY RANGE'")
+					wxT("(CASE WHEN p.partstrat = 'h' THEN 'HASH' WHEN p.partstrat = 'l' THEN 'LIST' WHEN p.partstrat = 'r' THEN 'RANGE'")
 					wxT(" ELSE 'UNKNOWN' END)")
 					wxT(" || ' (' || attr.fields || ')'")
 					wxT(" ELSE '' END AS partitionby")
