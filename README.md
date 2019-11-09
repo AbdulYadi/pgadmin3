@@ -36,4 +36,7 @@ Codes have been changed to adapt PostgreSQL internal changes up to version 12.0:
 Typical configure option
 ------------------------
 
+$ bash bootstrap
 $ ./configure --prefix=/opt/pgadmin3bigsql --with-pgsql=/opt/pgsql/12 --with-libgcrypt CFLAGS=-fPIC CXXFLAGS=-fPIC
+$ make
+$ sudo make install
