@@ -136,8 +136,7 @@ void pgSequence::UpdateValues()
 		delete sequence;
 	}*/		
 	pgSet *sequence = NULL;	
-	//if (GetConnection()->BackendMinimumVersion(11, 0)) {
-	if (GetDatabase()->BackendMinimumVersion(11, 0)) {
+	if (GetConnection()->BackendMinimumVersion(10, 0)) {
 		sequence = ExecuteSet(
 			wxString::Format(
 				wxT("SELECT s.last_value, s.min_value, s.max_value, s.cache_size AS cache_value, s.\"cycle\" AS is_cycled, s.increment_by, c.is_called")
