@@ -342,6 +342,11 @@ wxString pgTable::GetSql(ctlTree *browser)
 		if (constraints)
 			consCount = browser->GetChildrenCount(constraints->GetId());
 
+	/*ABDUL:BEGIN*/
+		int localColDefs = 0;
+		int constraintDefs = 0;
+	/*ABDUL:END*/
+		
 		// Get the columns
 		pgCollection *columns = browser->FindCollection(columnFactory, GetId());
 		if (columns)
@@ -369,6 +374,9 @@ wxString pgTable::GetSql(ctlTree *browser)
 			while ((column = (pgColumn *)colIt2.GetNextObject()) != 0)
 			{
 				column->ShowTreeDetail(browser);
+			/*ABDUL:BEGIN*/
+				localColDefs++;
+			/*ABDUL:END*/
 				if (column->GetColNumber() > 0)
 				{
 					if (colCount)
@@ -388,6 +396,9 @@ wxString pgTable::GetSql(ctlTree *browser)
 						{
 							cols_sql += wxString::Format(wxT("-- %s "), _("Inherited"))
 							            + wxT("from table ") +  column->GetInheritedTableName() + wxT(":");
+						/*ABDUL:BEGIN*/								
+							localColDefs--;
+						/*ABDUL:END*/
 						}
 					}
 
@@ -447,6 +458,10 @@ wxString pgTable::GetSql(ctlTree *browser)
 
 			while ((data = consIt.GetNextObject()) != 0)
 			{
+			/*ABDUL:BEGIN*/
+				constraintDefs++;
+			/*ABDUL:END*/
+				
 				data->ShowTreeDetail(browser);
 
 				cols_sql += wxT(",");
@@ -488,7 +503,7 @@ wxString pgTable::GetSql(ctlTree *browser)
 			cols_sql += wxT(" -- ") + firstLineOnly(prevComment);
 
 	/*ABDUL:BEGIN*/	
-		wxString partitionBy, partitionOf;
+		wxString partitionBy, partitionOf, forValues;
 		if (GetConnection()->BackendMinimumVersion(12, 0)) {
 			pgSet *set = ExecuteSet(
 				wxT("SELECT CASE WHEN p.partstrat IS NOT NULL THEN 'PARTITION BY ' ||")
@@ -496,8 +511,8 @@ wxString pgTable::GetSql(ctlTree *browser)
 					wxT(" ELSE 'UNKNOWN' END)")
 					wxT(" || ' (' || attr.fields || ')'")
 					wxT(" ELSE '' END AS partitionby")
-				wxT(",CASE WHEN c.relispartition THEN 'PARTITION OF ' || COALESCE(nparent.nspname || '.' || parent.relname, 'UNKNOWN') ELSE '' END")
-					wxT(" || ' ' || pg_get_expr(c.relpartbound, c.oid, true) AS partitionof")
+				wxT(",CASE WHEN c.relispartition THEN 'PARTITION OF ' || COALESCE(nparent.nspname || '.' || parent.relname, 'UNKNOWN') ELSE '' END AS partitionof")
+				wxT(",pg_get_expr(c.relpartbound, c.oid, true) AS forvalues")
 				wxT(" FROM pg_class c")
 				wxT(" INNER JOIN pg_namespace n ON n.oid = c.relnamespace")
 				wxT(" LEFT JOIN pg_partitioned_table p ON p.partrelid = c.oid")
@@ -515,6 +530,7 @@ wxString pgTable::GetSql(ctlTree *browser)
 			{
 				partitionBy = set->GetVal(0);
 				partitionOf = set->GetVal(1);
+				forValues = set->GetVal(2);
 				delete set;
 			}
 			if( !partitionOf.IsNull() )
@@ -523,8 +539,15 @@ wxString pgTable::GetSql(ctlTree *browser)
 			}					
 		}
 	/*ABDUL:END*/
-
-		sql += wxT("\n(\n") + cols_sql + wxT("\n)");
+	
+	/*ABDUL:BEGIN*/
+		//sql += wxT("\n(\n") + cols_sql + wxT("\n)");
+		if(localColDefs>0 || constraintDefs>0) {
+			sql += wxT("\n(\n") + cols_sql + wxT("\n)");
+		} else {
+			sql += wxT("\n") + cols_sql;
+		}
+	/*ABDUL:END*/	
 
 	/*ABDUL:BEGIN*/
 		/*if (GetInheritedTableCount())
@@ -532,6 +555,10 @@ wxString pgTable::GetSql(ctlTree *browser)
 			sql += wxT("\nINHERITS (") + GetQuotedInheritedTables() + wxT(")");
 		}*/
 		if (GetConnection()->BackendMinimumVersion(12, 0)) {
+			if( !forValues.IsNull() )
+			{
+				sql += wxT(" ") + forValues;
+			}
 			if( !partitionBy.IsNull() )
 			{
 				sql += wxT(" ") + partitionBy;
