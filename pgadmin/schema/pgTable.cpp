@@ -545,7 +545,7 @@ wxString pgTable::GetSql(ctlTree *browser)
 		if(localColDefs>0 || constraintDefs>0) {
 			sql += wxT("\n(\n") + cols_sql + wxT("\n)");
 		} else {
-			sql += wxT("\n") + cols_sql;
+			sql += wxT("\n-- (\n") + cols_sql + wxT("\n-- )");
 		}
 	/*ABDUL:END*/	
 
