@@ -557,11 +557,11 @@ wxString pgTable::GetSql(ctlTree *browser)
 		if (GetConnection()->BackendMinimumVersion(12, 0)) {
 			if( !forValues.IsNull() )
 			{
-				sql += wxT(" ") + forValues;
+				sql += wxT("\n") + forValues;
 			}
 			if( !partitionBy.IsNull() )
 			{
-				sql += wxT(" ") + partitionBy;
+				sql += wxT("\n") + partitionBy;
 			}
 		}
 		else if (GetInheritedTableCount())
