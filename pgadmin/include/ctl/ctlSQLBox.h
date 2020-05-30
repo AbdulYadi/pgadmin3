@@ -98,6 +98,7 @@ protected:
 	int processExitCode;
 
 private:
+	//void OnPositionStc2(wxStyledTextEvent &event);
 	void OnPositionStc(wxStyledTextEvent &event);
 	void OnMarginClick(wxStyledTextEvent &event);
 

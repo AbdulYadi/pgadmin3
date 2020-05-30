@@ -760,7 +760,6 @@ void ctlSQLBox::OnPositionStc(wxStyledTextEvent &event)
 	int st = GetStyleAt(pos - 1);
 	int match;
 
-
 	// Line numbers
 	// Ensure we don't recurse through any paint handlers on Mac
 #ifdef __WXMAC__

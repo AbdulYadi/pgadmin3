@@ -618,7 +618,7 @@ frmQuery::frmQuery(frmMain *form, const wxString &_title, pgConn *_conn, const w
 
 	// Create the SQL box. After this, sqlQuery variable can be used.
 	SqlBookAddPage();
-
+	
 	if (!file.IsEmpty() && wxFileName::FileExists(file))
 	{
 		wxFileName fn = file;
@@ -647,7 +647,6 @@ frmQuery::frmQuery(frmMain *form, const wxString &_title, pgConn *_conn, const w
 	queryMenu->Enable(MNU_CLEARHISTORY, false);
 	setTools(false);
 	lastFileFormat = settings->GetUnicodeFile();
-
 	// Note that under GTK+, SetMaxLength() function may only be used with single line text controls.
 	// (see http://docs.wxwidgets.org/2.8/wx_wxtextctrl.html#wxtextctrlsetmaxlength)
 #ifndef __WXGTK__
@@ -930,7 +929,6 @@ void frmQuery::Go()
 	cbConnection->SetSelection(0L);
 	wxCommandEvent ev;
 	OnChangeConnection(ev);
-
 	Show(true);
 	sqlQuery->SetFocus();
 	loading = false;
@@ -1779,6 +1777,35 @@ void frmQuery::OnChangeStc(wxStyledTextEvent &event)
 }
 
 
+#if wxCHECK_VERSION(3, 0, 0)
+void frmQuery::OnPositionStc(wxStyledTextEvent &event)
+{
+	wxObject *wo = event.GetEventObject(); 
+	if(sqlQuery==wo) {
+		//after void ctlSQLBox::OnPositionStc(wxStyledTextEvent &event)
+		//frmQuery::OnPositionStcDo should be called asynchronously
+		//or crash otherwise
+		CallAfter(&frmQuery::OnPositionStcDo);
+	} else {
+		OnPositionStcDo();
+	}
+}
+
+void frmQuery::OnPositionStcDo() {
+	int selFrom, selTo, selCount;
+	sqlQuery->GetSelection(&selFrom, &selTo);
+	selCount = selTo - selFrom;
+
+	wxString pos;
+	pos.Printf(_("Ln %d, Col %d, Ch %d"), sqlQuery->LineFromPosition(sqlQuery->GetCurrentPos()) + 1, sqlQuery->GetColumn(sqlQuery->GetCurrentPos()) + 1, sqlQuery->GetCurrentPos() + 1);
+	SetStatusText(pos, STATUSPOS_POS);
+	if (selCount < 1)
+		pos = wxEmptyString;
+	else
+		pos.Printf(wxPLURAL("%d char", "%d chars", selCount), selCount);
+	SetStatusText(pos, STATUSPOS_SEL);
+}
+#else
 void frmQuery::OnPositionStc(wxStyledTextEvent &event)
 {
 	int selFrom, selTo, selCount;
@@ -1794,7 +1821,7 @@ void frmQuery::OnPositionStc(wxStyledTextEvent &event)
 		pos.Printf(wxPLURAL("%d char", "%d chars", selCount), selCount);
 	SetStatusText(pos, STATUSPOS_SEL);
 }
-
+#endif //wxCHECK_VERSION(3, 0, 0)
 
 void frmQuery::OpenLastFile()
 {
@@ -3664,7 +3691,8 @@ void frmQuery::SqlBookAddPage()
 	box->Connect(wxID_ANY, wxEVT_KILL_FOCUS, wxFocusEventHandler(frmQuery::OnFocus));
 
 	sqlQueryCounter ++;
-	caption = wxString::Format(_("Query %i"), sqlQueryCounter);
+	caption = wxString::Format(_("Query %ld"), sqlQueryCounter);	
+	
 	box->SetTitle(caption);
 	sqlQueryBook->AddPage(box, caption, true);
 
