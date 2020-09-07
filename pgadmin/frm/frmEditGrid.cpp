@@ -2407,7 +2407,11 @@ sqlTable::sqlTable(pgConn *conn, pgQueryThread *_thread, const wxString &tabName
 			columns[i].typlen = colSet->GetLong(wxT("typlen"));
 			columns[i].typmod = colSet->GetLong(wxT("typmod"));
 
-			switch (columns[i].type)
+//ABDUL:7 Sep 2020:BEGIN			
+			//switch (columns[i].type)
+			long int coltype = (long int)columns[i].type;
+			switch (coltype)
+//ABDUL:7 Sep 2020:END
 			{
 				case PGOID_TYPE_BOOL:
 					columns[i].numeric = false;
