@@ -1,3 +1,11 @@
+**# README by Datatrans #**
+
+Codes have been changed to adapt PostgreSQL internal changes up to version 13.1:
+- No more relhasoids in pg_class.
+- No more cache_value, is_cycled, is_called in sequence object (since PostgreSQL 11).
+- No more adsrc in pg_attrdef, it should be calculated as pg_catalog.pg_get_expr(adbin, adrelid) instead.
+- Declarative Table Partitioning DDL.
+
 **# pgAdmin3 LTS by BigSQL README #**
 
 This is a fork of the pgAdmin3 project that aims to continue to support 
@@ -25,14 +33,6 @@ Sockets (on *nix platforms), and may be SSL encrypted for security. No
 additional drivers are required to communicate with the database server.
 
 pgAdmin3 is Free Software released under the PostgreSQL License.
-
-**# README by Datatrans #**
-
-Codes have been changed to adapt PostgreSQL internal changes up to version 13.1:
-- No more relhasoids in pg_class.
-- No more cache_value, is_cycled, is_called in sequence object (since PostgreSQL 11).
-- No more adsrc in pg_attrdef, it should be calculated as pg_catalog.pg_get_expr(adbin, adrelid) instead.
-- Declarative Table Partitioning DDL.
 
 Typical configure option
 ------------------------
