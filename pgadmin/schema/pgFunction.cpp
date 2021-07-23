@@ -331,6 +331,10 @@ wxString pgFunction::GetSql(ctlTree *browser)
 				sql += wxT(" STRICT");
 			if (GetSecureDefiner())
 				sql += wxT(" SECURITY DEFINER");
+		////ABDUL:23 Jul 2021:BEGIN
+			if (GetConnection()->BackendMinimumVersion(9, 6))
+				sql += wxT(" PARALLEL ") + GetParallel();
+		////ABDUL:23 Jul 2021:END
 
 			// PostgreSQL 8.3+ cost/row estimations
 			if (GetConnection()->BackendMinimumVersion(8, 3))
@@ -983,6 +987,17 @@ pgFunction *pgFunctionFactory::AppendFunctions(pgObject *obj, pgSchema *schema, 
 			    vol.IsSameAs(wxT("i")) ? wxT("IMMUTABLE") :
 			    vol.IsSameAs(wxT("s")) ? wxT("STABLE") :
 			    vol.IsSameAs(wxT("v")) ? wxT("VOLATILE") : wxT("unknown"));
+
+		////ABDUL:23 Jul 2021:BEGIN
+			if (obj->GetConnection()->BackendMinimumVersion(9, 6))
+			{
+				wxString parallel = functions->GetVal(wxT("proparallel"));
+				function->iSetParallel(
+			    	parallel.IsSameAs(wxT("s")) ? wxT("SAFE") :
+			    	parallel.IsSameAs(wxT("r")) ? wxT("RESTRICTED") :
+			    	parallel.IsSameAs(wxT("u")) ? wxT("UNSAFE") : wxT("unknown"));
+			}
+		//ABDUL:23 Jul 2021:END
 
 			// PostgreSQL 8.3 cost/row estimations
 			if (obj->GetConnection()->BackendMinimumVersion(8, 3))
