@@ -486,7 +486,12 @@ frmQuery::frmQuery(frmMain *form, const wxString &_title, pgConn *_conn, const w
 	sqlQueries = new wxComboBox(pnlQuery, CTL_SQLQUERYCBOX, wxT(""), wxDefaultPosition, wxDefaultSize, wxArrayString(), wxCB_DROPDOWN | wxCB_READONLY);
 	sqlQueries->SetToolTip(_("Previous queries"));
 	LoadQueries();
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	boxHistory->Add(sqlQueries, 1, wxEXPAND | wxALL, 1);
+#else	
 	boxHistory->Add(sqlQueries, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL, 1);
+#endif
 
 	// Delete Current button
 	btnDeleteCurrent = new wxButton(pnlQuery, CTL_DELETECURRENTBTN, _("Delete"));
@@ -2345,7 +2350,12 @@ void frmQuery::OnExecScript(wxCommandEvent &event)
 
 	// Clear markers and indicators
 	sqlQuery->MarkerDeleteAll(0);
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	sqlQuery->StartStyling(0);
+#else
 	sqlQuery->StartStyling(0, wxSTC_INDICS_MASK);
+#endif
 	sqlQuery->SetStyling(sqlQuery->GetText().Length(), 0);
 
 	// Menu stuff to initialize
@@ -2500,7 +2510,12 @@ void frmQuery::execQuery(const wxString &query, int resultToRetrieve, bool singl
 
 	// Clear markers and indicators
 	sqlQuery->MarkerDeleteAll(0);
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	sqlQuery->StartStyling(0);
+#else	
 	sqlQuery->StartStyling(0, wxSTC_INDICS_MASK);
+#endif
 	sqlQuery->SetStyling(sqlQuery->GetText().Length(), 0);
 
 	if (!sqlQuery->IsChanged())
@@ -2876,7 +2891,12 @@ void frmQuery::OnQueryComplete(pgQueryResultEvent &ev)
 
 				// Set an indicator on the error word (break on any kind of bracket, a space or full stop)
 				int sPos = errPos + selStart - 1, wEnd = 1;
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+				sqlQueryExec->StartStyling(sPos);
+#else
 				sqlQueryExec->StartStyling(sPos, wxSTC_INDICS_MASK);
+#endif
 				int c = sqlQueryExec->GetCharAt(sPos + wEnd);
 				size_t len = sqlQueryExec->GetText().Length();
 				while(c != ' ' && c != '(' && c != '{' && c != '[' && c != '.' &&
@@ -2885,7 +2905,12 @@ void frmQuery::OnQueryComplete(pgQueryResultEvent &ev)
 					wEnd++;
 					c = sqlQueryExec->GetCharAt(sPos + wEnd);
 				}
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+				//no replacement yet
+#else
 				sqlQueryExec->SetStyling(wEnd, wxSTC_INDIC0_MASK);
+#endif
 
 				int line = 0, maxLine = sqlQueryExec->GetLineCount();
 				while (line < maxLine && sqlQueryExec->GetLineEndPosition(line) < errPos + selStart + 1)
@@ -3196,6 +3221,10 @@ void frmQuery::completeQuery(bool done, bool explain, bool verbose)
 
 	sqlQueryExec = NULL;
 	sqlQuery->SetFocus();
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	sqlQuery->Colourise(0, sqlQuery->GetText().Length());
+#endif
 }
 
 

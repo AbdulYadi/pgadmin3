@@ -110,7 +110,12 @@ pgTypClass pgSet::ColTypClass(const int col) const
 	switch (StrToLong(typoid))
 	{
 		case PGOID_TYPE_BOOL:
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+			((pgSet*)this)->colClasses[col] = PGTYPCLASS_BOOL;
+#else
 			colClasses[col] = PGTYPCLASS_BOOL;
+#endif
 			break;
 		case PGOID_TYPE_INT8:
 		case PGOID_TYPE_INT2:
@@ -124,24 +129,44 @@ pgTypClass pgSet::ColTypClass(const int col) const
 		case PGOID_TYPE_MONEY:
 		case PGOID_TYPE_BIT:
 		case PGOID_TYPE_NUMERIC:
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+			((pgSet*)this)->colClasses[col] = PGTYPCLASS_NUMERIC;
+#else
 			colClasses[col] = PGTYPCLASS_NUMERIC;
+#endif
 			break;
 		case PGOID_TYPE_BYTEA:
 		case PGOID_TYPE_CHAR:
 		case PGOID_TYPE_NAME:
 		case PGOID_TYPE_TEXT:
 		case PGOID_TYPE_VARCHAR:
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+			((pgSet*)this)->colClasses[col] = PGTYPCLASS_STRING;
+#else
 			colClasses[col] = PGTYPCLASS_STRING;
+#endif
 			break;
 		case PGOID_TYPE_TIMESTAMP:
 		case PGOID_TYPE_TIMESTAMPTZ:
 		case PGOID_TYPE_TIME:
 		case PGOID_TYPE_TIMETZ:
 		case PGOID_TYPE_INTERVAL:
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+			((pgSet*)this)->colClasses[col] = PGTYPCLASS_DATE;
+#else
 			colClasses[col] = PGTYPCLASS_DATE;
+#endif
 			break;
 		default:
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+			((pgSet*)this)->colClasses[col] = PGTYPCLASS_OTHER;
+#else
 			colClasses[col] = PGTYPCLASS_OTHER;
+#endif
 			break;
 	}
 

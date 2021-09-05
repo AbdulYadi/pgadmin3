@@ -46,5 +46,10 @@ wxFont &hdFontAttribute::font()
 
 void hdFontAttribute::InitFont()
 {
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	defaultFont = new wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+#else
 	defaultFont = new wxFont(10, wxSWISS, wxNORMAL, wxNORMAL);
+#endif
 }

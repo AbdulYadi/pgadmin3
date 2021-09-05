@@ -95,11 +95,21 @@ dlgDirectDbg::dlgDirectDbg(frmDebugger *_parent, dbgController *_controller,
 		grdParams->GetClientSize(&width, &height);
 		for (int i = 0; i < grdParams->GetNumberCols(); i++)
 		{
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+			totalWidth += grdParams->GetColSize(i);
+#else
 			totalWidth += grdParams->GetColumnWidth(i);
+#endif
 		}
 		// Total client width - total six column widths - the first (an empty) column
 		// width
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+		grdParams->SetColSize(COL_DEF_VAL, width - totalWidth - 100);
+#else
 		grdParams->SetColumnWidth(COL_DEF_VAL, width - totalWidth - 100);
+#endif
 	}
 }
 

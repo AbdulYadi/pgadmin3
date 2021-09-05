@@ -49,7 +49,12 @@ BEGIN_EVENT_TABLE(frmDebugger, pgFrame)
 	EVT_STC_MARGINCLICK(wxID_ANY,        frmDebugger::OnMarginClick)
 	EVT_STC_UPDATEUI(wxID_ANY,           frmDebugger::OnPositionStc)
 	EVT_LISTBOX(wxID_ANY,                frmDebugger::OnSelectFrame)
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	EVT_GRID_CELL_CHANGED(               frmDebugger::OnVarChange)
+#else
 	EVT_GRID_CELL_CHANGE(                frmDebugger::OnVarChange)
+#endif
 
 	EVT_MENU(MNU_EXIT,                   frmDebugger ::OnExit)
 	EVT_MENU(MENU_ID_VIEW_TOOLBAR,       frmDebugger::OnToggleToolBar)

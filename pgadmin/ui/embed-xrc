@@ -12,7 +12,29 @@
 
 echo Rebuilding xrcdialogs.cpp...
 
-wxrc -c -o $( dirname $0 )/xrcDialogs.cpp.new $( dirname $0 )/*.xrc
+wxversion=$(wx-config --version)
+
+oldifs=$IFS
+IFS='.'
+read -a versionarr <<< "$wxversion"
+IFS=$oldifs
+varrlen=${#versionarr[@]}
+
+major=${versionarr[0]};
+if [[ ($varrlen > 1 ) ]]; then
+	minor=${versionarr[1]}
+else
+	minor=0
+fi
+
+varint=$((major*10+minor))
+
+if [[ ($varint >=31 ) ]]; then
+	wxrc -c -o $( dirname $0 )/xrcDialogs.cpp.new $( dirname $0 )/3.1/*.xrc
+else
+	wxrc -c -o $( dirname $0 )/xrcDialogs.cpp.new $( dirname $0 )/old/*.xrc
+fi
+
 
 diff $( dirname $0 )/xrcDialogs.cpp.new $( dirname $0 )/xrcDialogs.cpp 1> /dev/null
 rc=$?

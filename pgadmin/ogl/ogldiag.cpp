@@ -164,7 +164,12 @@ void wxDiagram::ShowAll(bool show)
 
 void wxDiagram::DrawOutline(wxDC &dc, double x1, double y1, double x2, double y2)
 {
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	wxPen dottedPen(wxColour(0, 0, 0), 1, wxPENSTYLE_DOT);
+#else
 	wxPen dottedPen(wxColour(0, 0, 0), 1, wxDOT);
+#endif
 	dc.SetPen(dottedPen);
 	dc.SetBrush((* wxTRANSPARENT_BRUSH));
 

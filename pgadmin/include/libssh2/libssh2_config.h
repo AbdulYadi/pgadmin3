@@ -53,7 +53,7 @@
 /* #undef HAVE_IOCTLSOCKET_CASE */
 
 /* Define if you have the gcrypt library. */
-#define HAVE_LIBGCRYPT 1
+/* #undef HAVE_LIBGCRYPT */
 
 /* Define if you have the ssl library. */
 /* #undef HAVE_LIBSSL */
@@ -149,7 +149,7 @@
 #define LIBSSH2_HAVE_ZLIB 1
 
 /* Use libgcrypt */
-#define LIBSSH2_LIBGCRYPT 1
+/* #undef LIBSSH2_LIBGCRYPT */
 
 /* Enable "none" MAC -- NOT RECOMMENDED */
 /* #undef LIBSSH2_MAC_NONE */

@@ -35,7 +35,7 @@
 /* #undef HAVE_IOCTLSOCKET_CASE */
 
 /* Define if you have the gcrypt library. */
-#define HAVE_LIBGCRYPT 1
+/* #undef HAVE_LIBGCRYPT */
 
 /* Define if you have the ssl library. */
 /* #undef HAVE_LIBSSL */
@@ -122,13 +122,10 @@
 #define LIBSSH2_HAVE_ZLIB 1
 
 /* Use libgcrypt */
-#define LIBSSH2_LIBGCRYPT 1
+/* #undef LIBSSH2_LIBGCRYPT */
 
 /* Compile libssh2 with OpenSSL support */
 /* #undef LIBSSH2_OPENSSL */
-
-/* Define to 1 if your C compiler doesn't accept -c and -o together. */
-/* #undef NO_MINUS_C_MINUS_O */
 
 /* Name of package */
 #define PACKAGE "pgadmin3"

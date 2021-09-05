@@ -100,10 +100,20 @@ void ddGenerationWizard::OnFinishPressed(wxWizardEvent &event)
 	wxString strChoicesAlter[4] = {_("Alter table"), _("Drop, then create"), _("Create table [conflict]"), wxT("No action")};
 	wxArrayString tables;
 	wxArrayInt options;
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	if(page4->getGrid()->GetNumberRows() > 0)
+#else	
 	if(page4->getGrid()->GetRows() > 0)
+#endif
 	{
 		int i;
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+		for(i = page4->getGrid()->GetNumberRows() - 1; i >= 0; i--)
+#else
 		for(i = page4->getGrid()->GetRows() - 1; i >= 0; i--)
+#endif
 		{
 			tables.Add(page4->getGrid()->GetCellValue(i, 0));
 			wxString value = page4->getGrid()->GetCellValue(i, 1);

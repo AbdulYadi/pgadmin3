@@ -119,7 +119,12 @@ void ddColumnKindIcon::basicDraw(wxBufferedDC &context, hdDrawingView *view)
 		//Adding a yellow circle to increase visibility of uk index
 		if(isUniqueKey())
 		{
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+			context.SetBrush(wxBrush(wxColour(wxT("YELLOW")), wxBRUSHSTYLE_SOLID));
+#else
 			context.SetBrush(wxBrush(wxColour(wxT("YELLOW")), wxSOLID));
+#endif
 			context.SetPen(wxPen(wxColour(wxT("YELLOW"))));
 			context.DrawCircle(copy.x + 6, copy.y + 7, 4);
 		}

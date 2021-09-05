@@ -235,8 +235,14 @@ bool wxXMetaFile::ReadFile(const wxChar *file)
 			{
 				wxMetaRecord *rec = new wxMetaRecord(META_SETBKMODE);
 				rec->param1 = getshort(handle); // Background mode
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+				if (rec->param1 == OPAQUE) rec->param1 = wxBRUSHSTYLE_SOLID;
+				else rec->param1 = wxBRUSHSTYLE_TRANSPARENT;
+#else
 				if (rec->param1 == OPAQUE) rec->param1 = wxSOLID;
 				else rec->param1 = wxTRANSPARENT;
+#endif
 				metaRecords.Append(rec);
 				break;
 			}
@@ -528,6 +534,16 @@ bool wxXMetaFile::ReadFile(const wxChar *file)
 				long colorref = getint(handle); // COLORREF 4 bytes
 
 				int style;
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+				if (msStyle == PS_DOT)
+					style = wxPENSTYLE_DOT;
+				else if (msStyle == PS_DASH)
+					style = wxPENSTYLE_SHORT_DASH;
+				else if (msStyle == PS_NULL)
+					style = wxPENSTYLE_TRANSPARENT;
+				else style = wxPENSTYLE_SOLID;
+#else
 				if (msStyle == PS_DOT)
 					style = wxDOT;
 				else if (msStyle == PS_DASH)
@@ -535,9 +551,16 @@ bool wxXMetaFile::ReadFile(const wxChar *file)
 				else if (msStyle == PS_NULL)
 					style = wxTRANSPARENT;
 				else style = wxSOLID;
+#endif
 
 				wxColour colour(GetRValue(colorref), GetGValue(colorref), GetBValue(colorref));
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+				rec->param1 = (long)wxThePenList->FindOrCreatePen(colour, x, (wxPenStyle)style);
+#else
 				rec->param1 = (long)wxThePenList->FindOrCreatePen(colour, x, style);
+#endif
+
 				metaRecords.Append(rec);
 				gdiObjects.Append(rec);
 
@@ -602,7 +625,12 @@ bool wxXMetaFile::ReadFile(const wxChar *file)
 				else if (lfWeight == 400)
 					weight = wxNORMAL;
 				else if (lfWeight == 900)
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+					weight = wxFONTWEIGHT_BOLD;
+#else
 					weight = wxBOLD;
+#endif
 				else weight = wxNORMAL;
 
 				int style;
@@ -615,8 +643,14 @@ bool wxXMetaFile::ReadFile(const wxChar *file)
 				int logPixelsY = 100;
 				int pointSize = (int)(lfHeight * 72.0 / logPixelsY);
 
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+				wxFont *theFont =
+				    wxTheFontList->FindOrCreateFont(pointSize, (wxFontFamily)family, (wxFontStyle)style, (wxFontWeight)weight, (lfUnderline != 0));
+#else
 				wxFont *theFont =
 				    wxTheFontList->FindOrCreateFont(pointSize, family, style, weight, (lfUnderline != 0));
+#endif
 
 				rec->param1 = (long) theFont;
 				metaRecords.Append(rec);
@@ -663,9 +697,24 @@ bool wxXMetaFile::ReadFile(const wxChar *file)
 					}
 					case BS_SOLID:
 					default:
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+						style = wxBRUSHSTYLE_SOLID;
+#else
 						style = wxSOLID;
+#endif
 						break;
 				}
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+				if (msStyle == PS_DOT)
+					style = wxPENSTYLE_DOT;
+				else if (msStyle == PS_DASH)
+					style = wxPENSTYLE_SHORT_DASH;
+				else if (msStyle == PS_NULL)
+					style = wxBRUSHSTYLE_TRANSPARENT;
+				else style = wxBRUSHSTYLE_SOLID;
+#else
 				if (msStyle == PS_DOT)
 					style = wxDOT;
 				else if (msStyle == PS_DASH)
@@ -673,9 +722,15 @@ bool wxXMetaFile::ReadFile(const wxChar *file)
 				else if (msStyle == PS_NULL)
 					style = wxTRANSPARENT;
 				else style = wxSOLID;
+#endif
 
 				wxColour colour(GetRValue(colorref), GetGValue(colorref), GetBValue(colorref));
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+				rec->param1 = (long)wxTheBrushList->FindOrCreateBrush(colour, (wxBrushStyle)style);
+#else
 				rec->param1 = (long)wxTheBrushList->FindOrCreateBrush(colour, style);
+#endif
 				metaRecords.Append(rec);
 				gdiObjects.Append(rec);
 				AddMetaRecordHandle(rec);

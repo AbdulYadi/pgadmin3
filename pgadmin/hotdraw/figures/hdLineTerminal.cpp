@@ -25,7 +25,12 @@
 hdLineTerminal::hdLineTerminal()
 {
 	middle = hdPoint(0, 0);
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	terminalLinePen = wxPen(wxString(wxT("BLACK")), 1, wxPENSTYLE_SOLID);
+#else
 	terminalLinePen = wxPen(wxString(wxT("BLACK")), 1, wxSOLID);
+#endif
 }
 
 hdLineTerminal::~hdLineTerminal()
@@ -48,7 +53,12 @@ hdPoint &hdLineTerminal::draw (wxBufferedDC &context, hdPoint &a, hdPoint &b, hd
 	view->CalcScrolledPosition(copyB.x, copyB.y, &copyB.x, &copyB.y);
 	context.DrawLine(copyA, copyB);
 
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	context.SetPen(wxPen(wxString(wxT("BLACK")), 1, wxPENSTYLE_SOLID));
+#else
 	context.SetPen(wxPen(wxString(wxT("BLACK")), 1, wxSOLID));
+#endif
 	int x = copyA.x + g.ddabs(copyA.x - copyB.x);
 	int y = copyA.y + g.ddabs(copyA.y - copyB.y);
 	middle = hdPoint(x, y);

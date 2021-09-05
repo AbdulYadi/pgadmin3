@@ -29,9 +29,16 @@ gqbGraphSimple::gqbGraphSimple()
 	normalFont = settings->GetSystemFont();
 	TableTitleFont = settings->GetSystemFont();
 	TableTitleFont.SetWeight(wxFONTWEIGHT_BOLD);
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	BackgroundLayer1 = wxBrush(wxColour(112, 112, 112), wxBRUSHSTYLE_SOLID);
+	BackgroundLayer2 = wxBrush (wxColour(208, 208, 208), wxBRUSHSTYLE_SOLID);
+	BackgroundTitle = wxBrush (wxColour(245, 245, 245), wxBRUSHSTYLE_SOLID);
+#else
 	BackgroundLayer1 = wxBrush(wxColour(112, 112, 112), wxSOLID);
 	BackgroundLayer2 = wxBrush (wxColour(208, 208, 208), wxSOLID);
 	BackgroundTitle = wxBrush (wxColour(245, 245, 245), wxSOLID);
+#endif
 	minTableWidth = 80;
 	minTableHeight = 54;
 	rowHeight = 0;                                //By default but this it's replaced by font metrics value
@@ -39,8 +46,14 @@ gqbGraphSimple::gqbGraphSimple()
 	rowRightMargin = 5;
 	rowTopMargin = 1;
 	lineClickThreshold = 7;
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	selectedPen = wxPen(wxColour(0, 146, 195), 2, wxPENSTYLE_SOLID);
+	selectedBrush = wxBrush(wxColour(0, 146, 195), wxBRUSHSTYLE_SOLID);
+#else
 	selectedPen = wxPen(wxColour(0, 146, 195), 2, wxSOLID);
 	selectedBrush = wxBrush(wxColour(0, 146, 195), wxSOLID);
+#endif
 	imgSelBoxEmpty = *gqbColNotSel_png_bmp;
 	imgSelBoxSelected = *gqbColSel_png_bmp;
 

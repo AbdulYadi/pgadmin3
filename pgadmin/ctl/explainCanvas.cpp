@@ -344,7 +344,12 @@ void ExplainText::OnPaint(wxPaintEvent &ev)
 
 	wxFont stdFont = settings->GetSystemFont();
 	wxFont boldFont = stdFont;
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	boldFont.SetWeight(wxFONTWEIGHT_BOLD);
+#else
 	boldFont.SetWeight(wxBOLD);
+#endif
 
 	int x = GetCharHeight() / 2;
 	int y = GetCharHeight() / 2;

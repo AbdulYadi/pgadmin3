@@ -1276,7 +1276,12 @@ void frmEditGrid::OnEditorHidden(wxGridEvent &event)
 
 void frmEditGrid::OnGridSelectCells(wxGridRangeSelectEvent &event)
 {
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	if (sqlGrid->IsEditable())
+#else
 	if (sqlGrid->GetEditable())
+#endif
 	{
 		wxArrayInt rows = sqlGrid->GetSelectedRows();
 

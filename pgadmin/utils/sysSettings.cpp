@@ -700,7 +700,12 @@ wxFont sysSettings::GetSQLFont()
 		return wxFont(9, wxTELETYPE, wxNORMAL, wxNORMAL);
 #else
 #ifdef __WXGTK__
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+		return wxFont(10, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+#else
 		return wxFont(10, wxTELETYPE, wxNORMAL, wxNORMAL);
+#endif
 #else
 		return wxFont(12, wxTELETYPE, wxNORMAL, wxNORMAL);
 #endif

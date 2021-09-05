@@ -532,8 +532,13 @@ void gqbColsPopUp::refreshTree(gqbModel *_model)
 void  gqbColsPopUp::OnPopUpOKClick(wxCommandEvent &event)
 {
 	this->usedGrid->SetCellValue(_row, _col, this->getEditText());
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	this->EndModal(wxID_OK);
+#else
 	this->MakeModal(false);
 	this->Hide();
+#endif
 	this->GetParent()->Refresh();
 }
 
@@ -551,8 +556,13 @@ void  gqbColsPopUp::OnPopUpTreeDoubleClick(wxTreeEvent &event)
 			{
 				this->usedGrid->SetCellValue(_row, _col, _("Set value"));
 			}
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+			this->EndModal(wxID_OK);
+#else
 			this->MakeModal(false);
 			this->Hide();
+#endif
 			this->GetParent()->Refresh();
 		}
 	}
@@ -670,7 +680,12 @@ void gqbCriteriaPanel::showColsPopUp(int row, int col, wxPoint pos)
 	p.y += p2.y + 40;
 	colsPopUp->SetPosition(p);
 	colsPopUp->Show();
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	colsPopUp->ShowModal();
+#else
 	colsPopUp->MakeModal(true);
+#endif
 	colsPopUp->focus();
 	colsPopUp->setUsedCell(restrictionsGrid, row, col);
 }
@@ -1017,7 +1032,12 @@ gqbOrderPanel::gqbOrderPanel(wxWindow *parent, gqbGridOrderTable *gridTableLeft,
 
 void gqbOrderPanel::OnButtonRemove(wxCommandEvent &)
 {
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	if(usedColumns->GetNumberRows() > 0)
+#else
 	if(usedColumns->GetRows() > 0)
+#endif
 	{
 		if(selRightTop != -1)
 		{
@@ -1032,9 +1052,19 @@ void gqbOrderPanel::OnButtonRemove(wxCommandEvent &)
 
 void gqbOrderPanel::OnButtonRemoveAll(wxCommandEvent &)
 {
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	if(usedColumns->GetNumberRows() > 0)
+#else
 	if(usedColumns->GetRows() > 0)
+#endif
 	{
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+		for(int i = usedColumns->GetNumberRows() - 1; i >= 0; i--)
+#else
 		for(int i = usedColumns->GetRows() - 1; i >= 0; i--)
+#endif
 		{
 			gqbColumn *col = (gqbColumn *) tableRight->getObjectAt(i, 0);
 			gqbQueryObject *colParent = (gqbQueryObject *) tableRight->getObjectAt(i, 1);
@@ -1047,14 +1077,24 @@ void gqbOrderPanel::OnButtonRemoveAll(wxCommandEvent &)
 
 void gqbOrderPanel::OnButtonAdd(wxCommandEvent &)
 {
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	if(availableColumns->GetNumberRows() > 0)
+#else
 	if(availableColumns->GetRows() > 0)
+#endif
 	{
 		if(selLeft != -1)
 		{
 			gqbColumn *col = (gqbColumn *) tableLeft->getObjectAt(selLeft, 0);
 			gqbQueryObject *colParent = (gqbQueryObject *) tableLeft->getObjectAt(selLeft, 1);
 			tableRight->AppendItem(col, colParent, 'A');
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+			usedColumns->SetCellRenderer((usedColumns->GetNumberRows() - 1), 1, new wxGridCellButtonRenderer);
+#else
 			usedColumns->SetCellRenderer((usedColumns->GetRows() - 1), 1, new wxGridCellButtonRenderer);
+#endif
 			tableLeft->removeRowAt(selLeft);
 		}
 	}
@@ -1063,14 +1103,29 @@ void gqbOrderPanel::OnButtonAdd(wxCommandEvent &)
 
 void gqbOrderPanel::OnButtonAddAll(wxCommandEvent &)
 {
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	if(availableColumns->GetNumberRows() > 0)
+#else
 	if(availableColumns->GetRows() > 0)
+#endif
 	{
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+		for(int i = availableColumns->GetNumberRows() - 1; i >= 0; i--)
+#else
 		for(int i = availableColumns->GetRows() - 1; i >= 0; i--)
+#endif
 		{
 			gqbColumn *col = (gqbColumn *) tableLeft->getObjectAt(i, 0);
 			gqbQueryObject *colParent = (gqbQueryObject *) tableLeft->getObjectAt(i, 1);
 			tableRight->AppendItem(col, colParent, 'A');
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+			usedColumns->SetCellRenderer((usedColumns->GetNumberRows() - 1), 1, new wxGridCellButtonRenderer);
+#else
 			usedColumns->SetCellRenderer((usedColumns->GetRows() - 1), 1, new wxGridCellButtonRenderer);
+#endif
 			tableLeft->removeRowAt(i);
 		}
 	}
@@ -1085,7 +1140,12 @@ void gqbOrderPanel::OnGridSelectCell( wxGridEvent &ev )
 		{
 			wxObject *object = ev.GetEventObject();
 			wxGrid *grid = wxDynamicCast( object, wxGrid );
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+			if(grid->GetNumberCols() == 1)              // Left Grid
+#else
 			if(grid->GetCols() == 1)              // Left Grid
+#endif
 			{
 				selLeft = ev.GetRow();
 			}
@@ -1402,8 +1462,13 @@ void gqbJoinsPopUp::OnPopUpOKClick(wxCommandEvent &event)
 		updateJoin();
 	}
 
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	this->EndModal(wxID_OK);
+#else
 	this->MakeModal(false);
 	this->Hide();
+#endif
 	this->GetParent()->Refresh();
 	this->join = NULL;
 	this->selectedCol = NULL;
@@ -1471,8 +1536,13 @@ void  gqbJoinsPopUp::OnPopUpTreeDoubleClick(wxTreeEvent &event)
 
 			updateJoin();
 
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+			this->EndModal(wxID_OK);
+#else
 			this->MakeModal(false);
 			this->Hide();
+#endif
 			this->GetParent()->Refresh();
 			this->join = NULL;
 			this->selectedCol = NULL;
@@ -1569,7 +1639,12 @@ void gqbJoinsPanel::showColsPopUp(int row, int col, wxPoint pos)
 	p.y += p2.y + 40;
 	joinsPopUp->SetPosition(p);
 	joinsPopUp->Show();
-	joinsPopUp->MakeModal(true);
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	joinsPopUp->ShowModal();
+#else
+	jpinsPopUp->MakeModal(true);
+#endif
 	joinsPopUp->focus();
 	joinsPopUp->setUsedCell(joinsGrid, row, col);
 }

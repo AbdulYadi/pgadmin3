@@ -142,14 +142,34 @@ ctlDefaultPrivilegesPanel::ctlDefaultPrivilegesPanel(ctlDefaultSecurityPanel *de
 	lbPrivileges->SetImageList(imgList, wxIMAGE_LIST_SMALL);
 	lbPrivileges->AddColumn(_("Role/Group"), 60, wxLIST_FORMAT_LEFT);
 	lbPrivileges->AddColumn(_("Privileges"), 60, wxLIST_FORMAT_LEFT);
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0) 
+	itemSizer1->Add(lbPrivileges, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 4);
+#else
 	itemSizer1->Add(lbPrivileges, 0, wxEXPAND | wxALIGN_CENTRE_VERTICAL | wxTOP | wxLEFT | wxRIGHT, 4);
+#endif
+
 	item0->Add(itemSizer1, 0, wxEXPAND | wxALL, 5);
 
 	wxBoxSizer *itemSizer2 = new wxBoxSizer(wxHORIZONTAL);
 	btnAddPriv = new wxButton(this, CTL_DEFADDPRIV, _("Add/Change"));
+
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0) 
+	itemSizer2->Add(btnAddPriv, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 4);
+#else
 	itemSizer2->Add(btnAddPriv, 0, wxEXPAND | wxALIGN_CENTRE_VERTICAL | wxTOP | wxLEFT | wxRIGHT, 4);
+#endif
+
 	btnDelPriv = new wxButton(this, CTL_DEFDELPRIV, _("Remove"));
+
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0) 
+	itemSizer2->Add(btnDelPriv, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 4);
+#else
 	itemSizer2->Add(btnDelPriv, 0, wxEXPAND | wxALIGN_CENTRE_VERTICAL | wxTOP | wxLEFT | wxRIGHT, 4);
+#endif
+
 	item0->Add(itemSizer2, 0, wxEXPAND | wxALL, 0);
 
 	wxStaticBox *sb = new wxStaticBox(this, -1, _("Privileges"));
@@ -158,11 +178,22 @@ ctlDefaultPrivilegesPanel::ctlDefaultPrivilegesPanel(ctlDefaultSecurityPanel *de
 
 	wxBoxSizer *itemSizer4a = new wxBoxSizer(wxHORIZONTAL);
 	stGroup = new wxStaticText(this, CTL_DEFSTATICGROUP, strGroupLabel);
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0) 
+	itemSizer4a->Add(stGroup, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 4);
+#else
 	itemSizer4a->Add(stGroup, 0, wxEXPAND | wxALIGN_CENTRE_VERTICAL | wxTOP | wxLEFT | wxRIGHT, 4);
+#endif
 	cbGroups = new ctlComboBox(this, CTL_DEFCBGROUP, wxDefaultPosition, wxDefaultSize);
 	cbGroups->Append(wxT("public"));
 	cbGroups->SetSelection(0);
+
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0) 
+	itemSizer4a->Add(cbGroups, wxEXPAND | wxTOP | wxLEFT | wxRIGHT);
+#else
 	itemSizer4a->Add(cbGroups, wxEXPAND | wxALIGN_CENTRE_VERTICAL | wxTOP | wxLEFT | wxRIGHT);
+#endif
 	itemSizer3->Add(itemSizer4a, 0, wxEXPAND | wxALL, 0);
 
 	/* border size depends on the plateform */
@@ -178,9 +209,23 @@ ctlDefaultPrivilegesPanel::ctlDefaultPrivilegesPanel(ctlDefaultSecurityPanel *de
 
 	wxBoxSizer *itemSizer5 = new wxBoxSizer(wxHORIZONTAL);
 	allPrivileges = new wxCheckBox(this, CTL_DEFALLPRIV, wxT("ALL"));
+
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0) 
+	itemSizer5->Add(allPrivileges, wxEXPAND | wxTOP | wxLEFT | wxRIGHT);
+#else
 	itemSizer5->Add(allPrivileges, wxEXPAND | wxALIGN_CENTRE_VERTICAL | wxTOP | wxLEFT | wxRIGHT);
+#endif
+
 	allPrivilegesGrant = new wxCheckBox(this, CTL_DEFALLPRIVGRANT, wxT("WITH GRANT OPTION"));
+
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0) 
+	itemSizer5->Add(allPrivilegesGrant, wxEXPAND | wxTOP | wxLEFT | wxRIGHT);
+#else
 	itemSizer5->Add(allPrivilegesGrant, wxEXPAND | wxALIGN_CENTRE_VERTICAL | wxTOP | wxLEFT | wxRIGHT);
+#endif
+
 	allPrivilegesGrant->Disable();
 	itemSizer3->Add(itemSizer5, 0, wxALL, bordersize);
 
@@ -193,10 +238,23 @@ ctlDefaultPrivilegesPanel::ctlDefaultPrivilegesPanel(ctlDefaultSecurityPanel *de
 		wxCheckBox *cb;
 		wxBoxSizer *itemSizer6 = new wxBoxSizer(wxHORIZONTAL);
 		cb = new wxCheckBox(this, CTL_DEFPRIVCB + i, priv);
+
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0) 
+		itemSizer6->Add(cb, wxEXPAND | wxTOP | wxLEFT | wxRIGHT);
+#else
 		itemSizer6->Add(cb, wxEXPAND | wxALIGN_CENTRE_VERTICAL | wxTOP | wxLEFT | wxRIGHT);
+#endif
+
 		privCheckboxes[i++] = cb;
 		cb = new wxCheckBox(this, CTL_DEFPRIVCB + i, wxT("WITH GRANT OPTION"));
+
+//ABDUL: 30 Aug 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0) 
+		itemSizer6->Add(cb, wxEXPAND | wxTOP | wxLEFT | wxRIGHT);
+#else
 		itemSizer6->Add(cb, wxEXPAND | wxALIGN_CENTRE_VERTICAL | wxTOP | wxLEFT | wxRIGHT);
+#endif
 		cb->Disable();
 		privCheckboxes[i] = cb;
 		itemSizer3->Add(itemSizer6, 0, wxALL, bordersize);

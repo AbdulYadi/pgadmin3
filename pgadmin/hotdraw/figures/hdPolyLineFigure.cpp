@@ -42,7 +42,12 @@ hdPolyLineFigure::hdPolyLineFigure()
 	startPoint = hdPoint(0, 0);
 	endPoint = hdPoint(0, 0);
 	pointAtPos = hdPoint(0, 0);
+//ABDUL: 4 Sep 2021:BEGIN
+#if wxCHECK_VERSION(3, 1, 0)
+	linePen = wxPen(wxString(wxT("BLACK")), 1, wxPENSTYLE_SOLID);
+#else
 	linePen = wxPen(wxString(wxT("BLACK")), 1, wxSOLID);
+#endif
 }
 
 hdPolyLineFigure::~hdPolyLineFigure()
