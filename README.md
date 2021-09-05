@@ -48,5 +48,5 @@ On using wxWidgets version 3.1 or higher
 
 1. For wxWidgets 3.0 or less, *.xrc files are moved from ./pgadmin/ui to ./pgadmin/ui/old.
 2. For wxWidgets 3.1 or more, *.xrc files are moved from ./pgadmin/ui to ./pgadmin/ui/3.1.
-3. For Linux, embed-xrc has been modified to switch the *.xrc directory based on default wx-config. You may tweak the file for manual adjustment.
+3. For Linux, embed-xrc has been modified to switch the *.xrc directory based on default wxWidgets version. You may tweak the file for manual adjustment.
 4. For Windows user, embed-xrc.bat has been modified to switch *.xrc directory to ./pgadmin/ui/old. Please change it to ./pgadmin/ui/3.1 on using wxWidgets 3.1 or higher.
