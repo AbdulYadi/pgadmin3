@@ -1643,7 +1643,7 @@ void gqbJoinsPanel::showColsPopUp(int row, int col, wxPoint pos)
 #if wxCHECK_VERSION(3, 1, 0)
 	joinsPopUp->ShowModal();
 #else
-	jpinsPopUp->MakeModal(true);
+	joinsPopUp->MakeModal(true);
 #endif
 	joinsPopUp->focus();
 	joinsPopUp->setUsedCell(joinsGrid, row, col);
